@@ -1,39 +1,41 @@
 # -*- makefile -*-
+TARGET:=u-search
 include config.mk
 
-all: test spiderd
-	@echo [FINISHED u-search]
+libcppsockets:
+	cd $(SRCDIR)/cppsockets && make
 
-libcppsockets: cppsockets
-	cd $(SRC_BASE)/cppsockets && make
+spider: copyfiles libdata_storage
+	cd $(SRCDIR)/spider && make
 
-libspider: libdata_storage spider
-	cd $(SRC_BASE)/spider && make libspider
+libdata_storage:
+	cd $(SRCDIR)/data-storage && make
 
-spiderd: libspider copyfiles
-	cd $(SRC_BASE)/spider && make spider
-
-libdata_storage: data-storage
-	cd $(SRC_BASE)/data-storage && make
-
-test: libspider libcppsockets libdata_storage copyfiles tests
-	cd $(SRC_BASE)/tests && make
+test: libcppsockets libdata_storage spider
+	cd $(SRCDIR)/test && make
 
 copyfiles: database.dat.example servers.dat.example
-	mkdir -p $(BUILD)/etc/u-search
-	cp database.dat.example $(BUILD)/etc/u-search
-	cp servers.dat.example $(BUILD)/etc/u-search
+	mkdir -p $(DESTDIR)/etc/u-search
+	cp database.dat.example $(DESTDIR)/etc/u-search
+	cp servers.dat.example $(DESTDIR)/etc/u-search
 
-docs: doc
-	cd $(SRC_BASE)/doc && make
+$(TARGET): test doc
+
+doc:
+	cd $(SRCDIR)/doc && make
 
 help:
-	@echo libcppsockets libspider spiderd libdata_storage test copygiles docs
+	@echo Available modules: libcppsockets spider spider libdata_storage test copygiles doc
+	@echo Debug mode: DEBUG=yes
+	@echo Test coverage: TEST_COVERAGE=yes
+	@echo Show build commands: VERBOSE=yes
 
 clean:
 	rm -rf build
-	cd $(SRC_BASE)/spider && make clean
-	cd $(SRC_BASE)/cppsockets && make clean
-	cd $(SRC_BASE)/data-storage && make clean
-	cd $(SRC_BASE)/tests && make clean
-	cd $(SRC_BASE)/doc && make clean
+	cd $(SRCDIR)/spider && make clean
+	cd $(SRCDIR)/cppsockets && make clean
+	cd $(SRCDIR)/data-storage && make clean
+	cd $(SRCDIR)/test && make clean
+	cd $(SRCDIR)/doc && make clean
+
+.PHONY: help doc spider copyfiles libdata_storage libcppsockets test

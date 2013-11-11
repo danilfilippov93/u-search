@@ -24,64 +24,61 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LIBCPPSOCKETS_DATASOCKET_H_
-#define LIBCPPSOCKETS_DATASOCKET_H_
+#ifndef TESTS_DATASTORAGETEST_H_
+#define TESTS_DATASTORAGETEST_H_
 
-#include <vector>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <iostream>
 
-#include "abstractsocket.h"
+#include "data-storage/entities.h"
 
-/**
- * @brief Socket which can send and receive data.
- */
-class DataSocket : public AbstractSocket {
+class FileEntryTest : public CppUnit::TestFixture {
  public:
-  /**
-   * Simple constructor which create an object and init all fields.
-   */
-  DataSocket();
+  void setUp();
+  void GetByPathOnServerTestCase();
 
-  /**
-   * Constructor which create an object, init all fields and set
-   * socket local address and port, remote address and port and type of socket.
-   *
-   * @param socket Socket.
-   * @param local_address Local address and port.
-   * @param remote_address Remote address and port.
-   * @param type Type of socket.
-   */
-  DataSocket(int socket, SocketAddress &local_address,
-             SocketAddress &remote_address, SocketType type);
+ private:
+  CPPUNIT_TEST_SUITE(FileEntryTest);
+  CPPUNIT_TEST(GetByPathOnServerTestCase);
+  CPPUNIT_TEST_SUITE_END();
 
-  /**
-   * Destructor.
-   */
-  ~DataSocket();
-
-  /**
-   * @brief Flush socket buffer (incoming buffer will be empty after call).
-   */
-  void Flush();
-
-  /**
-   * @brief Read not more than size bytes from socket.
-   *
-   * @param data Buffer.
-   * @param size Size of buffer.
-   *
-   * @return Readen size. On error return -1.
-   */
-  virtual size_t ReadData(void *data, size_t size);
-
-  /**
-   * @brief Write size data from data to socket.
-   *
-   * @param data Buffer.
-   * @param size Size of buffer.
-   *
-   * @return Readen size. On error return -1.
-   */
-  virtual size_t WriteData(void *data, size_t size);
+  std::string name_;
+  std::string server_;
+  std::string user_;
+  std::string password_;
 };
 
-#endif  // LIBCPPSOCKETS_DATASOCKET_H_
+class FileAttributeTest : public CppUnit::TestFixture {
+ public:
+  void setUp();
+  void ConstructorsTestCase();
+
+ private:
+  CPPUNIT_TEST_SUITE(FileAttributeTest);
+  CPPUNIT_TEST(ConstructorsTestCase);
+  CPPUNIT_TEST_SUITE_END();
+
+  std::string name_;
+  std::string server_;
+  std::string user_;
+  std::string password_;
+};
+
+class FileParameterTest : public CppUnit::TestFixture {
+ public:
+  void setUp();
+  void ConstructorsTestCase();
+
+ private:
+  CPPUNIT_TEST_SUITE(FileParameterTest);
+  CPPUNIT_TEST(ConstructorsTestCase);
+  CPPUNIT_TEST_SUITE_END();
+
+  std::string name_;
+  std::string server_;
+  std::string user_;
+  std::string password_;
+};
+
+#endif  // TESTS_DATASTORAGETEST_H_

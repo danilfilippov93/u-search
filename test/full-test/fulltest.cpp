@@ -24,64 +24,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LIBCPPSOCKETS_DATASOCKET_H_
-#define LIBCPPSOCKETS_DATASOCKET_H_
+#include "test/cppsockets-test/cppsocketstest.h"
+#include "test/datastorage-test/datastoragetest.h"
+#include "test/spider-test/spidertest.h"
 
-#include <vector>
+CPPUNIT_TEST_SUITE_REGISTRATION(SocketAddressTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(UDPSocketTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(TCPSocketTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(SpiderTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AbstractSocketTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FileEntryTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FileAttributeTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FileParameterTest);
 
-#include "abstractsocket.h"
+int main() {
+  CppUnit::TextUi::TestRunner runner;
+  CppUnit::TestFactoryRegistry &registry =
+      CppUnit::TestFactoryRegistry::getRegistry();
+  runner.addTest( registry.makeTest() );
+  runner.run();
 
-/**
- * @brief Socket which can send and receive data.
- */
-class DataSocket : public AbstractSocket {
- public:
-  /**
-   * Simple constructor which create an object and init all fields.
-   */
-  DataSocket();
-
-  /**
-   * Constructor which create an object, init all fields and set
-   * socket local address and port, remote address and port and type of socket.
-   *
-   * @param socket Socket.
-   * @param local_address Local address and port.
-   * @param remote_address Remote address and port.
-   * @param type Type of socket.
-   */
-  DataSocket(int socket, SocketAddress &local_address,
-             SocketAddress &remote_address, SocketType type);
-
-  /**
-   * Destructor.
-   */
-  ~DataSocket();
-
-  /**
-   * @brief Flush socket buffer (incoming buffer will be empty after call).
-   */
-  void Flush();
-
-  /**
-   * @brief Read not more than size bytes from socket.
-   *
-   * @param data Buffer.
-   * @param size Size of buffer.
-   *
-   * @return Readen size. On error return -1.
-   */
-  virtual size_t ReadData(void *data, size_t size);
-
-  /**
-   * @brief Write size data from data to socket.
-   *
-   * @param data Buffer.
-   * @param size Size of buffer.
-   *
-   * @return Readen size. On error return -1.
-   */
-  virtual size_t WriteData(void *data, size_t size);
-};
-
-#endif  // LIBCPPSOCKETS_DATASOCKET_H_
+  return 0;
+}

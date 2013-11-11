@@ -1,25 +1,34 @@
 # -*- makefile -*-
-SRC_BASE:= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+SRCDIR:= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-CC:=g++-4.7
+CC:=g++
+
+ifneq ($(VERBOSE),yes)
+MAKEFLAGS += -s
+endif  # VERBOSE
+
+CFLAGS+=-Wall --std=c++11
 
 ifeq ($(DEBUG),yes)
-CFLAGS:=-Wall --std=c++11 -g -O0
-BUILD:=$(SRC_BASE)/build/debug
-DEFINES:=-DMSS_DEBUG
-else
-CFLAGS:=-Wall --std=c++11 -O2
-BUILD:=$(SRC_BASE)/build/release
-endif
+CFLAGS+=-g -O0 -DMSS_DEBUG
+DESTDIR:=$(SRCDIR)/build/debug
+DEFINES+=-DMSS_DEBUG
+else  # DEBUG
+CFLAGS+=-O2
+DESTDIR:=$(SRCDIR)/build/release
+endif  # DEBUG
+
+INCLUDEPATH+=-I$(SRCDIR)
+LIBS+=-L$(DESTDIR)/lib
 
 ifeq ($(TEST_COVERAGE),yes)
 CFLAGS+=--coverage -O0 -ftest-coverage
-LDFLAGS:=-lgcov
-else
-endif
-
-INCLUDE_PATHS:=-I$(SRC_BASE)
+LIBS:=-lgcov
+endif  # TEST_COVERAGE
 
 OBJECTS:=$(SOURCES:.cpp=.o)
 
-install: all
+all: $(TARGET)
+	@echo SUCCESS: $(TARGET)
+
+.PHONY: all $(TARGET) clean

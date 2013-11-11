@@ -24,6 +24,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <libsmbclient.h>
+#include <unistd.h>
+#include <dirent.h>
+
+#include <algorithm>
+#include <string>
+#include <list>
+#include <vector>
+#include <memory>
+
+#include "common.h"
 #include "spider.h"
 
 inline void libsmbmm_guest_auth_smbc_get_data(const char *server,
@@ -48,58 +61,49 @@ Spider::Spider()
   openlog("spider", LOG_CONS | LOG_ODELAY, LOG_USER);
 
   mime_type_attr_ = NULL;
+  servers_list_ = NULL;
+  result_ = NULL;
 
-  if (unlikely(smbc_init(libsmbmm_guest_auth_smbc_get_data, 0) < 0)) {
+  if (UNLIKELY(smbc_init(libsmbmm_guest_auth_smbc_get_data, 0) < 0)) {
     DetectError();
     MSS_FATAL("smbc_init", error_);
-    servers_list_ = NULL;
-    result_ = NULL;
     return;
   }
 
   // Create a directory to store file headers.
-  if (unlikely(mkdir(TMPDIR, 00744 /* rwxr--r-- */) && errno != EEXIST)) {
+  if (UNLIKELY(mkdir(TMPDIR, 00744 /* rwxr--r-- */) && errno != EEXIST)) {
     DetectError();
     MSS_ERROR("mkdir", error_);
-    servers_list_ = NULL;
-    result_ = NULL;
     return;
   }
 
   // Prepare to work with libmagic
-  if (unlikely((cookie_ = magic_open(MAGIC_MIME_TYPE | MAGIC_ERROR)) == NULL)) {
+  if (UNLIKELY((cookie_ = magic_open(MAGIC_MIME_TYPE | MAGIC_ERROR)) == NULL)) {
     error_ = magic_errno(cookie_);
     MSS_ERROR("magic_open", error_);
-    servers_list_ = NULL;
-    result_ = NULL;
     return;
   }
-  if (unlikely(magic_load(cookie_, NULL) == -1)) {
+  if (UNLIKELY(magic_load(cookie_, NULL) == -1)) {
     error_ = magic_errno(cookie_);
     MSS_ERROR("magic_open", error_);
-    servers_list_ = NULL;
-    result_ = NULL;
     return;
   }
 
   // Allocare memory to the servers list.
   servers_list_ = new(std::nothrow) std::list<std::string>();
-  if (unlikely(servers_list_ == NULL)) {
+  if (UNLIKELY(servers_list_ == NULL)) {
     error_ = ENOMEM;
     MSS_FATAL("", error_);
-    servers_list_ = NULL;
-    result_ = NULL;
     return;
   }
 
   // Allocate memory to the result vector.
   result_ = new(std::nothrow) std::vector<std::string>(VECTOR_SIZE);
-  if (unlikely(result_ == NULL)) {
+  if (UNLIKELY(result_ == NULL)) {
     error_ = ENOMEM;
     MSS_FATAL("result_", error_);
     delete servers_list_;
     servers_list_ = NULL;
-    result_ = NULL;
     return;
   }
   last_ = result_->begin();
@@ -108,13 +112,13 @@ Spider::Spider()
 }
 
 Spider::Spider(const std::string &servers_file) : Spider() {
-  if (unlikely(error_))
+  if (UNLIKELY(error_))
     return;
 
   servers_file_ = servers_file;
 
   // Read servers_file_.
-  if (unlikely(ReadServersList())) {
+  if (UNLIKELY(ReadServersList())) {
     MSS_DEBUG_ERROR("ReadServersList", error_);
     delete servers_list_;
     servers_list_ = NULL;
@@ -126,7 +130,7 @@ Spider::Spider(const std::string &servers_file) : Spider() {
 Spider::Spider(const std::string &servers_file, const std::string &db_name,
                const std::string &db_server, const std::string &db_user,
                const std::string &db_password) : Spider(servers_file) {
-  if (unlikely(error_))
+  if (UNLIKELY(error_))
     return;
 
   db_name_ = db_name;
@@ -134,7 +138,7 @@ Spider::Spider(const std::string &servers_file, const std::string &db_name,
   db_user_ = db_user;
   db_password_ = db_password;
 
-  if (unlikely(ConnetToDataBase())) {
+  if (UNLIKELY(ConnetToDataBase())) {
     MSS_FATAL_MESSAGE(DatabaseEntity::get_db_error().c_str());
     error_ = ENOMSG;
     delete servers_list_;
@@ -147,11 +151,11 @@ Spider::Spider(const std::string &servers_file, const std::string &db_name,
   // Detect an attribute to store mime types
   mime_type_attr_ = FileAttribute::GetByNameAndType("mime-type",
                                                     FileAttribute::faString);
-  if (unlikely(!mime_type_attr_)) {
+  if (UNLIKELY(!mime_type_attr_)) {
     // Create attribute if it doesn't exists
     mime_type_attr_ = std::shared_ptr<FileAttribute>(
         new(std::nothrow) FileAttribute("mime-type", FileAttribute::faString));
-    if (unlikely((!mime_type_attr_))) {
+    if (UNLIKELY((!mime_type_attr_))) {
       MSS_DEBUG_MESSAGE(DatabaseEntity::get_db_error().c_str());
       error_ = ENOMSG;
       delete servers_list_;
@@ -164,15 +168,11 @@ Spider::Spider(const std::string &servers_file, const std::string &db_name,
 
 Spider::~Spider() {
   // Close connection with data base
-  if (unlikely(!DatabaseEntity::Disconnect()))
+  if (UNLIKELY(!DatabaseEntity::Disconnect()))
     MSS_DEBUG_MESSAGE(DatabaseEntity::get_db_error().c_str());
 
-  if (unlikely(rmdir(TMPDIR))) {
-    if (likely(errno == ENOTEMPTY)) {
-      // TODO(yulyugin): Delete all content from this directory
-    }
-    DetectError();
-    MSS_ERROR("rmdir", error_);
+  if (UNLIKELY(DeleteDir(TMPDIR))) {
+    MSS_DEBUG_ERROR("DeleteDir", error_);
   }
 
   if (cookie_)
@@ -194,7 +194,7 @@ int Spider::ReadServersList() {
 
   FILE *fin;
   fin = fopen(servers_file_.c_str(), "r");
-  if (unlikely(fin == NULL)) {
+  if (UNLIKELY(fin == NULL)) {
     DetectError();
     MSS_ERROR("fopen", error_);
     return -1;
@@ -209,11 +209,11 @@ int Spider::ReadServersList() {
     // Deleting '\n' symbols from the end of the string
     temp.erase(temp.end() - 1);
 
-    if (unlikely(temp.empty())) {
+    if (UNLIKELY(temp.empty())) {
       continue;  // Do nothing if find an empthy string.
     }
 
-    if (unlikely(std::find(servers_list_->begin(), servers_list_->end(),
+    if (UNLIKELY(std::find(servers_list_->begin(), servers_list_->end(),
                            temp) != servers_list_->end())) {
       MSS_WARN_MESSAGE(("Duplicated server: " + temp).c_str());
       temp.clear();
@@ -233,7 +233,7 @@ int Spider::ReadServersList() {
 int Spider::DumpToFile(const std::string &name,
                        std::vector<std::string> *files) {
   FILE *fout;
-  if (unlikely((fout = fopen(name.c_str(), "w")) == NULL)) {
+  if (UNLIKELY((fout = fopen(name.c_str(), "w")) == NULL)) {
     DetectError();
     MSS_ERROR("fopen", error_);
     return -1;
@@ -241,7 +241,7 @@ int Spider::DumpToFile(const std::string &name,
 
   for (std::vector<std::string>::iterator itr = files->begin();
        itr != files->end(); ++itr) {
-    if (unlikely(fprintf(fout, "%s\n", itr->c_str()) < 0)) {
+    if (UNLIKELY(fprintf(fout, "%s\n", itr->c_str()) < 0)) {
       DetectError();
       MSS_ERROR("fprintf", error_);
       fclose(fout);
@@ -257,11 +257,11 @@ void Spider::Run() {
   for (std::list<std::string>::iterator itr = servers_list_->begin();
        itr != servers_list_->end(); ++itr) {
     // Scan each server for all files.
-    if (unlikely(ScanSMBDir("smb://" + *itr))) {
+    if (UNLIKELY(ScanSMBDir("smb://" + *itr))) {
       MSS_DEBUG_ERROR(("ScanSMBDir smb://" + *itr).c_str(), error_);
     }
     // Added content to data base.
-    if (unlikely(DumpToDataBase())) {
+    if (UNLIKELY(DumpToDataBase())) {
       MSS_DEBUG_ERROR(("DumpToDataBase smb://" + *itr).c_str(), error_);
     }
   }
@@ -277,13 +277,13 @@ int Spider::AddServer(const std::string &name) {
   servers_list_->push_back(name);
 
   FILE *fout = fopen(servers_file_.c_str(), "a");
-  if (unlikely(!fout)) {
+  if (UNLIKELY(!fout)) {
     DetectError();
     MSS_ERROR("fopen", error_);
     return -1;
   }
 
-  if (unlikely(fprintf(fout, "%s\n", name.c_str()) < 0)) {
+  if (UNLIKELY(fprintf(fout, "%s\n", name.c_str()) < 0)) {
     DetectError();
     MSS_ERROR("fprintf", error_);
     fclose(fout);
@@ -304,7 +304,7 @@ int Spider::DelServer(const std::string &name) {
   servers_list_->remove(name);
 
   FILE *fout = fopen(servers_file_.c_str(), "w");
-  if (unlikely(!fout)) {
+  if (UNLIKELY(!fout)) {
     DetectError();
     MSS_ERROR("fopen", error_);
     return -1;
@@ -312,7 +312,7 @@ int Spider::DelServer(const std::string &name) {
 
   for (std::list<std::string>::iterator itr = servers_list_->begin();
        itr != servers_list_->end(); ++itr) {
-    if (unlikely(fprintf(fout, "%s\n", itr->c_str()) < 0)) {
+    if (UNLIKELY(fprintf(fout, "%s\n", itr->c_str()) < 0)) {
       DetectError();
       MSS_ERROR("fprintf", error_);
       fclose(fout);
@@ -331,7 +331,7 @@ std::shared_ptr<std::list<std::string> > Spider::GetSMBDirContent(
   char buf[BUF_SIZE];
 
   // Open given smb directory.
-  if (unlikely((directory_handler = smbc_opendir(dir.c_str())) < 0)) {
+  if (UNLIKELY((directory_handler = smbc_opendir(dir.c_str())) < 0)) {
     DetectError();
     MSS_ERROR(("smbc_opendir " + dir).c_str(), error_);
     return nullptr;
@@ -348,7 +348,7 @@ std::shared_ptr<std::list<std::string> > Spider::GetSMBDirContent(
     dirp = static_cast<char *>(buf);
 
     // Get dir content which can placed in buf.
-    if (unlikely((dirc = smbc_getdents(directory_handler,
+    if (UNLIKELY((dirc = smbc_getdents(directory_handler,
                                        (struct smbc_dirent *)dirp,
                                        sizeof(buf)))) < 0) {
       DetectError();
@@ -376,7 +376,7 @@ std::shared_ptr<std::list<std::string> > Spider::GetSMBDirContent(
   }
 
   // Close given smb directory
-  if (unlikely(smbc_closedir(directory_handler) < 0)) {
+  if (UNLIKELY(smbc_closedir(directory_handler) < 0)) {
     DetectError();
     MSS_ERROR(("smbc_closedir " + dir).c_str(), error_);
   }
@@ -390,7 +390,7 @@ int Spider::ScanSMBDir(const std::string &dir) {
   char buf[BUF_SIZE];
 
   // Open given smb directory.
-  if (unlikely((directory_handler = smbc_opendir(dir.c_str())) < 0)) {
+  if (UNLIKELY((directory_handler = smbc_opendir(dir.c_str())) < 0)) {
     DetectError();
     MSS_ERROR(("smbc_opendir " + dir).c_str(), error_);
     return -1;
@@ -404,7 +404,7 @@ int Spider::ScanSMBDir(const std::string &dir) {
     dirp = static_cast<char *>(buf);
 
     // Get dir content which can placed in buf.
-    if (unlikely((dirc = smbc_getdents(directory_handler,
+    if (UNLIKELY((dirc = smbc_getdents(directory_handler,
                                        (struct smbc_dirent *)dirp,
                                        sizeof(buf)))) < 0) {
       DetectError();
@@ -477,7 +477,7 @@ int Spider::ScanSMBDir(const std::string &dir) {
   }
 
   // Close given smb directory
-  if (unlikely(smbc_closedir(directory_handler) < 0)) {
+  if (UNLIKELY(smbc_closedir(directory_handler) < 0)) {
     DetectError();
     MSS_ERROR(("smbc_closedir " + dir).c_str(), error_);
   }
@@ -487,14 +487,14 @@ int Spider::ScanSMBDir(const std::string &dir) {
 
 int Spider::AddFileEntryInDataBase(const std::string &file,
                                    const std::string &server) {
-  if (unlikely(file.empty() || server.empty())) {
+  if (UNLIKELY(file.empty() || server.empty())) {
     MSS_ERROR_MESSAGE("Given string is empthy.");
     error_ = EINVAL;
     return -1;
   }
 
   size_t pos = file.rfind("/");
-  if (unlikely(pos == std::string::npos)) {
+  if (UNLIKELY(pos == std::string::npos)) {
     MSS_ERROR_MESSAGE(("Given string " + file + "have no '/' symbol.").c_str());
     error_ = EINVAL;
     return -1;
@@ -513,27 +513,29 @@ int Spider::AddFileEntryInDataBase(const std::string &file,
   std::string path = file.substr(server.length() + 7);
 
   // Parsing file name to simplify further search.
-  if (unlikely(NameParser(&name))) {
+  if (UNLIKELY(NameParser(&name))) {
     MSS_DEBUG_MESSAGE("NameParser: -1 returned");
     return -1;
   }
 
-  FileEntry entry(name, path, server);  // Put new entity in data base.
-  // TODO(yulyugin): Add normal error check
-  /*if (unlikely(!DatabaseEntity::get_db_error().empty())) {
-    DEBUG_INFO(DatabaseEntity::get_db_error().c_str());
-    error_ = ENOMSG;
-    return -1;
-  }*/
+  // Try to find this entry in database
+  auto db_file = FileEntry::GetByPathOnServer(path, server);
 
-  // Added a mime type information for entry
-  FileParameter(entry, *mime_type_attr_, DetectMimeType(file), 0, true);
+  // Add new entry or updaste existing
+  FileEntry entry(name, path, server);
+  // TODO(yulyugin): Add error check
+
+  if (db_file == nullptr) {
+    // No such entry in database so we need to add a mime type information
+    FileParameter(entry, *mime_type_attr_, DetectMimeType(file), 0, true);
+    // TODO(yulyugin): Add error check
+  }
 
   return 0;
 }
 
 int Spider::NameParser(std::string *name) {
-  if (unlikely(name->empty())) {
+  if (UNLIKELY(name->empty())) {
     MSS_ERROR_MESSAGE("empty string is given.");
     error_ = EINVAL;
     return -1;
@@ -553,7 +555,7 @@ int Spider::NameParser(std::string *name) {
 // TODO(yulyugin): Add check on errors and rollback transaction in case
 // of fatal error.
 int Spider::DumpToDataBase() {
-  if (unlikely(last_ == result_->begin())) {
+  if (UNLIKELY(last_ == result_->begin())) {
     MSS_DEBUG_MESSAGE("No result's to dump.");
     return 0;
   }
@@ -563,10 +565,15 @@ int Spider::DumpToDataBase() {
   std::string server(result_->front(), 6, result_->front().find("/", 6) - 6);
 
   DatabaseEntity::StartTransaction();
+  /*if (UNLIKELY(!DatabaseEntity::get_db_error().empty())) {
+    MSS_ERROR_MESSAGE(DatabaseEntity::get_db_error().c_str());
+    error_ = ENOMSG;
+    return -1;
+  }*/
 
   for (std::vector<std::string>::iterator itr = result_->begin();
        itr != last_; ++itr) {
-    if (unlikely(AddFileEntryInDataBase(*itr, server))) {
+    if (UNLIKELY(AddFileEntryInDataBase(*itr, server))) {
       if (error_ == ENOMSG) {  // Data base error.
         MSS_DEBUG_MESSAGE(DatabaseEntity::get_db_error().c_str());
       } else {
@@ -576,6 +583,11 @@ int Spider::DumpToDataBase() {
   }
 
   DatabaseEntity::CommitTransaction();
+  /*if (UNLIKELY(!DatabaseEntity::get_db_error().empty())) {
+    MSS_ERROR_MESSAGE(DatabaseEntity::get_db_error().c_str());
+    error_ = ENOMSG;
+    return -1;
+  }*/
 
   return 0;
 }
@@ -584,7 +596,7 @@ void Spider::AddSMBFile(const std::string &name) {
   *last_ = name;
   ++last_;
 
-  if (unlikely(last_ == result_->end())) {
+  if (UNLIKELY(last_ == result_->end())) {
     DumpToDataBase();
     last_ = result_->begin();
   }
@@ -592,8 +604,8 @@ void Spider::AddSMBFile(const std::string &name) {
 
 const char *Spider::DetectMimeType(const std::string &path) {
   int smb_fd = smbc_open(path.c_str(), O_RDONLY, 0);
-  if (unlikely(smb_fd < 0)) {
-    if (likely(errno == EISDIR))
+  if (UNLIKELY(smb_fd < 0)) {
+    if (LIKELY(errno == EISDIR))
       return "inode/directory";
 
     DetectError();
@@ -608,13 +620,13 @@ const char *Spider::DetectMimeType(const std::string &path) {
   // Create a storage for file header in TMPDIR and open it
   int fd = open((TMPDIR + name).c_str(), O_CREAT | O_RDWR | O_EXCL,
                 00744 /* rwxr--r-- */);
-  if (unlikely(fd == -1)) {
-    if (likely(errno = ENOTDIR)) {
+  if (UNLIKELY(fd == -1)) {
+    if (LIKELY(errno = ENOTDIR)) {
       // TODO(yulyugin): Check if TMPDIR doesn't exists create it.
     }
     DetectError();
     MSS_ERROR("open", error_);
-    if (unlikely(smbc_close(smb_fd))) {
+    if (UNLIKELY(smbc_close(smb_fd))) {
       DetectError();
       MSS_ERROR("smbc_close", error_);
     }
@@ -624,14 +636,14 @@ const char *Spider::DetectMimeType(const std::string &path) {
   void *buf = malloc(HEADERSIZE);  // Buffer to store header.
 
   // Copy file header to TMPDIR
-  if (unlikely(smbc_read(smb_fd, buf, HEADERSIZE) < 0)) {
+  if (UNLIKELY(smbc_read(smb_fd, buf, HEADERSIZE) < 0)) {
     DetectError();
     MSS_ERROR("smbc_read", error_);
-    if (unlikely(smbc_close(smb_fd))) {
+    if (UNLIKELY(smbc_close(smb_fd))) {
       DetectError();
       MSS_ERROR("smbc_close", error_);
     }
-    if (unlikely(close(fd))) {
+    if (UNLIKELY(close(fd))) {
       DetectError();
       MSS_ERROR("close", error_);
     }
@@ -639,14 +651,14 @@ const char *Spider::DetectMimeType(const std::string &path) {
     return "unknown";
   }
 
-  if (unlikely(write(fd, buf, HEADERSIZE) < 0)) {
+  if (UNLIKELY(write(fd, buf, HEADERSIZE) < 0)) {
     DetectError();
     MSS_ERROR("write", error_);
-    if (unlikely(smbc_close(smb_fd))) {
+    if (UNLIKELY(smbc_close(smb_fd))) {
       DetectError();
       MSS_ERROR("smbc_close", error_);
     }
-    if (unlikely(close(fd))) {
+    if (UNLIKELY(close(fd))) {
       DetectError();
       MSS_ERROR("close", error_);
     }
@@ -655,14 +667,14 @@ const char *Spider::DetectMimeType(const std::string &path) {
   }
 
   // Move to the begining of the file
-  if (unlikely(lseek(fd, 0, SEEK_SET) != 0)) {
+  if (UNLIKELY(lseek(fd, 0, SEEK_SET) != 0)) {
     DetectError();
     MSS_ERROR("lseek", error_);
-    if (unlikely(smbc_close(smb_fd))) {
+    if (UNLIKELY(smbc_close(smb_fd))) {
       DetectError();
       MSS_ERROR("smbc_close", error_);
     }
-    if (unlikely(close(fd))) {
+    if (UNLIKELY(close(fd))) {
       DetectError();
       MSS_ERROR("close", error_);
     }
@@ -671,14 +683,14 @@ const char *Spider::DetectMimeType(const std::string &path) {
   }
 
   const char *mime_type = magic_descriptor(cookie_, fd);
-  if (unlikely(mime_type == NULL)) {
+  if (UNLIKELY(mime_type == NULL)) {
     error_ = magic_errno(cookie_);
     MSS_ERROR("magic_descriptor", error_);
-    if (unlikely(smbc_close(smb_fd))) {
+    if (UNLIKELY(smbc_close(smb_fd))) {
       DetectError();
       MSS_ERROR("smbc_close", error_);
     }
-    if (unlikely(close(fd))) {
+    if (UNLIKELY(close(fd))) {
       DetectError();
       MSS_ERROR("close", error_);
     }
@@ -686,14 +698,14 @@ const char *Spider::DetectMimeType(const std::string &path) {
     return "unknown";
   }
 
-  if (unlikely(smbc_close(smb_fd))) {
+  if (UNLIKELY(smbc_close(smb_fd))) {
     DetectError();
     MSS_ERROR("smbc_close", error_);
   }
   free(buf);
 
   // Remove temporary file.
-  if (unlikely(unlink((TMPDIR + name).c_str()))) {
+  if (UNLIKELY(unlink((TMPDIR + name).c_str()))) {
     DetectError();
     MSS_ERROR("unlink", error_);
   }
@@ -713,15 +725,88 @@ int Spider::InitMimeTypeAttr()  {
 
   mime_type_attr_ = FileAttribute::GetByNameAndType("mime-type",
                                                     FileAttribute::faString);
-  if (unlikely(!mime_type_attr_)) {
+  if (UNLIKELY(!mime_type_attr_)) {
     // Create attribute if it doesn't exists
     mime_type_attr_ = std::shared_ptr<FileAttribute>(
         new(std::nothrow) FileAttribute("mime-type", FileAttribute::faString));
-    if (unlikely((!mime_type_attr_))) {
+    if (UNLIKELY((!mime_type_attr_))) {
       MSS_DEBUG_MESSAGE(DatabaseEntity::get_db_error().c_str());
       error_ = ENOMSG;
       return -1;
     }
+  }
+
+  return 0;
+}
+
+int Spider::DeleteDir(const std::string &dir) {
+  // Try to delete directory
+  if (rmdir(dir.c_str())) {
+    if (UNLIKELY(errno != ENOTEMPTY)) {
+      DetectError();
+      MSS_ERROR("rmdir", error_);
+      return -1;
+    }
+  } else {
+    return 0;
+  }
+
+  // Delete all content of the directory if it's noe empty and then delete it
+  DIR *dirfd = opendir(dir.c_str());
+  if (UNLIKELY(!dirfd)) {
+    DetectError();
+    MSS_ERROR("opendir", error_);
+    return -1;
+  }
+
+  struct dirent entry;
+  struct dirent *result = NULL;
+
+  while (true) {
+    if (UNLIKELY(readdir_r(dirfd, &entry, &result))) {
+      DetectError();
+      MSS_ERROR("readdir_r", error_);
+      break;
+    }
+
+    if (result == NULL) {
+      break;  // No more content in this directory
+    }
+
+    if (!strcmp(entry.d_name, ".") || !strcmp(entry.d_name, "..")) {
+      continue;  // Don't try to delete "." and ".."
+    }
+
+    if (unlink((dir + "/" + entry.d_name).c_str())) {
+      if (LIKELY(errno == EISDIR)) {
+        if (UNLIKELY(DeleteDir(dir + "/" + entry.d_name))) {
+          MSS_DEBUG_ERROR("DeleteDir", error_);
+          break;
+        }
+      } else {
+        DetectError();
+        MSS_ERROR("unlink", error_);
+        break;
+      }
+    }
+  }
+
+  if (UNLIKELY(closedir(dirfd))) {
+    DetectError();
+    MSS_ERROR("closedir", error_);
+    return -1;
+  }
+
+  // Don't try to remove directory again
+  // if an error occurs during content removing
+  if (LIKELY(error_ == 0)) {
+    if (UNLIKELY(rmdir(dir.c_str()))) {
+      DetectError();
+      MSS_ERROR("rmdir", error_);
+      return -1;
+    }
+  } else {
+    return -1;
   }
 
   return 0;

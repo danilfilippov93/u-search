@@ -24,64 +24,59 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LIBCPPSOCKETS_DATASOCKET_H_
-#define LIBCPPSOCKETS_DATASOCKET_H_
+#ifndef TESTS_SPIDERTEST_H_
+#define TESTS_SPIDERTEST_H_
 
-#include <vector>
+//#include <cppunit/TestAssert.h>
+#include <cppunit/TestFixture.h>
+//
+#include <cppunit/extensions/HelperMacros.h>
 
-#include "abstractsocket.h"
+#include <string>
 
-/**
- * @brief Socket which can send and receive data.
- */
-class DataSocket : public AbstractSocket {
+#include "spider/spider.h"
+
+class SpiderTest : public CppUnit::TestFixture, public Spider {
  public:
-  /**
-   * Simple constructor which create an object and init all fields.
-   */
-  DataSocket();
+  SpiderTest();
+  void setUp();
+  void ConstructorsTestCase();
+  void GetSetTestCase();
+  void DetectErrorTestCase();
+  void ReadServersListTestCase();
+  void DumpToFileTestCase();
+  void GetSMBDirContentTestCase();
+  void ScanSMBDirTestCase();
+  void NameParserTestCase();
+  void AddServerTestCase();
+  void DelServerTestCase();
+  void AddFileEntryInDataBaseTestCase();
+  void DetectMimeTypeTestCase();
+  void DumpToDataBaseTestCase();
+  void DeleteDirTestCase();
 
-  /**
-   * Constructor which create an object, init all fields and set
-   * socket local address and port, remote address and port and type of socket.
-   *
-   * @param socket Socket.
-   * @param local_address Local address and port.
-   * @param remote_address Remote address and port.
-   * @param type Type of socket.
-   */
-  DataSocket(int socket, SocketAddress &local_address,
-             SocketAddress &remote_address, SocketType type);
+ private:
+  CPPUNIT_TEST_SUITE(SpiderTest);
+  CPPUNIT_TEST(ConstructorsTestCase);
+  CPPUNIT_TEST(GetSetTestCase);
+  CPPUNIT_TEST(DetectErrorTestCase);
+  CPPUNIT_TEST(ReadServersListTestCase);
+  CPPUNIT_TEST(DumpToFileTestCase);
+  CPPUNIT_TEST(GetSMBDirContentTestCase);
+  CPPUNIT_TEST(ScanSMBDirTestCase);
+  CPPUNIT_TEST(NameParserTestCase);
+  CPPUNIT_TEST(AddServerTestCase);
+  CPPUNIT_TEST(DelServerTestCase);
+  CPPUNIT_TEST(AddFileEntryInDataBaseTestCase);
+  CPPUNIT_TEST(DetectMimeTypeTestCase);
+  CPPUNIT_TEST(DumpToDataBaseTestCase);
+  CPPUNIT_TEST(DeleteDirTestCase);
+  CPPUNIT_TEST_SUITE_END();
 
-  /**
-   * Destructor.
-   */
-  ~DataSocket();
-
-  /**
-   * @brief Flush socket buffer (incoming buffer will be empty after call).
-   */
-  void Flush();
-
-  /**
-   * @brief Read not more than size bytes from socket.
-   *
-   * @param data Buffer.
-   * @param size Size of buffer.
-   *
-   * @return Readen size. On error return -1.
-   */
-  virtual size_t ReadData(void *data, size_t size);
-
-  /**
-   * @brief Write size data from data to socket.
-   *
-   * @param data Buffer.
-   * @param size Size of buffer.
-   *
-   * @return Readen size. On error return -1.
-   */
-  virtual size_t WriteData(void *data, size_t size);
+  std::string name_;
+  std::string server_;
+  std::string user_;
+  std::string password_;
 };
 
-#endif  // LIBCPPSOCKETS_DATASOCKET_H_
+#endif  // TESTS_SPIDERTEST_H_

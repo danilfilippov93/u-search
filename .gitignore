@@ -1,0 +1,17 @@
+*.o
+*~
+*.swp
+*.swo
+*.log
+*.dat
+*.gcov
+*.gcda
+*.gcno
+*.pro.user
+/build
+/doc/latex
+/doc/html
+/doc/u-search.pdf
+*/classes/*
+*.class
+*.jar
