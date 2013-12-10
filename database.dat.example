@@ -1,4 +1,5 @@
-database_name
-database_hostname
-database_user
-database_password
+# u-search MySQL configuration file
+database_name = u-search
+database_hostname = localhost
+database_user = root
+database_password = qwerty

@@ -39,6 +39,7 @@
 #include <string.h>
 #include <syslog.h>
 
+#include <map>
 #include <string>
 
 /**
@@ -206,6 +207,56 @@ template <class mType> mType *CopyToHeap(const mType &obj) {
 #define LIKELY(x)   __builtin_expect(!!(x), 1)
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 
+typedef std::map<std::string, std::string> Config;
+
+inline int read_config(Config &config, const char *filename) {
+  FILE *fin = fopen(filename, "r");
+
+  if (!fin) {
+    MSS_FATAL("fopen", errno);
+    return -1;
+  }
+
+  char *buf = NULL;
+  size_t size = 0;
+
+  while (getline(&buf, &size, fin) != -1) {
+    // Remove comment and newline.
+    buf[strcspn(buf, "#\n")] = '\0';
+
+    // Skip whitespace.
+    char *name = buf + strspn(buf, " \t");
+
+    if(*name == '\0') {
+      // Empty line or comment.
+      continue;
+    }
+
+    char *eq = strchr(name, '=');
+    if(!eq) {
+      MSS_ERROR_MESSAGE("Syntax error.");
+      return -1;
+    }
+    char *value = eq + 1;
+
+    value += strspn(value, " \t");
+    name[strcspn(name, " \t")] = '\0';
+    value[strcspn(name, " \t")] = '\0';
+    config[name] = value;
+  }
+
+  // Save getline error.
+  int error = errno;
+
+  fclose(fin);
+
+  if (error != 0) {
+    MSS_FATAL("getline", error);
+    return -1;
+  }
+  return 0;
+}
+
 /**
  * Read database config file.
  *
@@ -222,49 +273,24 @@ inline int read_database_config(std::string *database_name,
                                 std::string *database_user,
                                 std::string *database_password,
                                 const char *database_config_file) {
-  FILE *fin = fopen(database_config_file, "r");
-  if (UNLIKELY(!fin)) {
-    MSS_FATAL("fopen", errno);
+  Config conf;
+  if(read_config(conf, database_config_file) == -1)
     return -1;
+
+  for (auto i = conf.begin(); i != conf.end(); i++) {
+    if (i->first == "database_name") {
+      database_name->assign(i->second);
+    } else if (i->first == "database_hostname") {
+      database_hostname->assign(i->second);
+    } else if (i->first == "database_user") {
+      database_user->assign(i->second);
+    } else if (i->first == "database_password") {
+      database_password->assign(i->second);
+    } else {
+      MSS_ERROR_MESSAGE("database config: unknown option");
+    }
   }
 
-  char *buf = NULL;
-  size_t size = 0;
-
-  // Detect database name
-  if (getline(&buf, &size, fin) < 0) {
-    MSS_FATAL("getline", errno);
-    return -1;
-  }
-  database_name->assign(buf);
-  database_name->erase(database_name->end() - 1);
-
-  // Detect database hostname
-  if (getline(&buf, &size, fin) < 0) {
-    MSS_FATAL("getline", errno);
-    return -1;
-  }
-  database_hostname->assign(buf);
-  database_hostname->erase(database_hostname->end() - 1);
-
-  // Detect database username
-  if (getline(&buf, &size, fin) < 0) {
-    MSS_FATAL("getline", errno);
-    return -1;
-  }
-  database_user->assign(buf);
-  database_user->erase(database_user->end() - 1);
-
-  // Detect database password
-  if (getline(&buf, &size, fin) < 0) {
-    MSS_FATAL("getline", errno);
-    return -1;
-  }
-  database_password->assign(buf);
-  database_password->erase(database_password->end() - 1);
-
-  free(buf);
-  fclose(fin);
   return 0;
 }
 
