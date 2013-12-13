@@ -45,7 +45,7 @@ void SpiderTest::setUp() {
   CPPUNIT_ASSERT_MESSAGE("Error in reading configuration files",
                          read_database_config(&name_, &server_, &user_,
                                               &password_,
-                                              "../" DATABASE_CONFIG) == 0);
+                                              DATABASE_CONFIG) == 0);
   int fd = mkstemp(buf_);
   CPPUNIT_ASSERT(fd != -1);
 
