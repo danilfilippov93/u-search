@@ -124,7 +124,7 @@ Spider::Spider(const std::string &config,
                const std::string &db_name,
                const std::string &db_server,
                const std::string &db_user,
-               const std::string &db_password) {
+               const std::string &db_password) : Spider() {
   if (ReadConfig(config) == -1)
     return;
 
