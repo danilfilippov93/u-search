@@ -49,6 +49,8 @@ class ServerManager {
 
   /**
    * Get server to be indexed.
+   *
+   * @return Server hostname.
    */
   std::string GetServer();
 

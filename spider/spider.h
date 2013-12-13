@@ -68,6 +68,7 @@ class Spider {
    * Read configuration file.
    *
    * @param config Configuration file name.
+   * @return -1 on error, 0 otherwise
    */
   int ReadConfig(const std::string &config);
 
