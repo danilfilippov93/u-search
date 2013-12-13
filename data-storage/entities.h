@@ -61,7 +61,7 @@ sql_create_5(mss_files, 1, 4,
              mysqlpp::sql_timestamp, last_seen);
 
 /**
- * Class to work with data base.
+ * Class to work with database.
  */
 class DatabaseEntity {
   public:
@@ -136,7 +136,7 @@ class DatabaseEntity {
     static bool RollbackTransaction();
 
     /**
-     * Returns last occures data base error.
+     * Returns last occured database error.
      *
      * @return error string.
      */
@@ -144,14 +144,14 @@ class DatabaseEntity {
 
   protected:
     /**
-     * Get connection with data base.
+     * Get database connection.
      *
-     * @return Connection with data base.
+     * @return Database connection.
      */
-    static mysqlpp::TCPConnection & get_db_connection();
+    static mysqlpp::TCPConnection &get_db_connection();
 
     /**
-     * Connection with data base.
+     * Connection with database.
      */
     static mysqlpp::TCPConnection db_connection_;
 

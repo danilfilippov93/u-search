@@ -108,27 +108,33 @@ class ServerQueue {
 
   /**
    * Add a server to the list
+   * @param address Server hostname.
    */
   void AddServer(std::string address);
 
   /**
    * Get command handling, task query
+   *
+   * @return Server hostname.
    */
   std::string CmdGet();
 
   /**
    * Get command handling, keepalive
+   * @param address Server hostname.
    */
   void CmdGet(const std::string address);
 
   /**
    * Release command handling
+   * @param address Server hostname.
    */
   void CmdRelease(const std::string address);
 
   /**
     * Read servers list from servers file.
     *
+    * @param servers_file Filename.
     * @return 0 on success, -1 otherwise.
     */
   int ReadServersList(std::string servers_file);

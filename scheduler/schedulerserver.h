@@ -57,6 +57,8 @@ class SchedulerServer {
 
   /**
    * Check if errors occured during initialization.
+   *
+   * @return True if there was an error.
    */
   bool is_error() const { return error_; }
 
