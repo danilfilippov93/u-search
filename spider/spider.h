@@ -52,7 +52,7 @@ class Spider {
    * connects to scheduler server and database and creates a MIME
    * type attribute if it doesn't exists.
    *
-   * @param server Scheduler server address.
+   * @param config Configuration file with scheduler server address.
    * @param db_name Name of the data base.
    * @param db_server Name of the data base server.
    * @param db_user Name of the data base user.
