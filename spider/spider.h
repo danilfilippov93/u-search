@@ -53,10 +53,10 @@ class Spider {
    * type attribute if it doesn't exists.
    *
    * @param config Configuration file with scheduler server address.
-   * @param db_name Name of the data base.
-   * @param db_server Name of the data base server.
-   * @param db_user Name of the data base user.
-   * @param db_password Password to data base.
+   * @param db_name Name of the database.
+   * @param db_server Name of the database server.
+   * @param db_user Name of the database user.
+   * @param db_password Database password.
    */
   Spider(const std::string &config,
          const std::string &db_name,
@@ -93,7 +93,7 @@ class Spider {
   inline int get_error() const { return error_; }
 
   /**
-   * Get set of indexed files which still don't dumped in data base.
+   * Get set of indexed files which still are not dumped in database.
    *
    * @return Get vector of indexed files.
    */
@@ -117,34 +117,34 @@ class Spider {
  protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /**
-   * Set the name of the data base.
+   * Set the name of the database.
    *
-   * @param db_name Name of the data base.
+   * @param db_name Database name.
    */
   inline void set_db_name(const std::string &db_name) { db_name_ = db_name; }
 
   /**
-   * Set the name of data base server.
+   * Set the name of database server.
    *
-   * @param db_server Name of the server with data base.
+   * @param db_server Name of the server with database.
    */
   inline void set_db_server(const std::string &db_server) {
     db_server_ = db_server;
   }
 
   /**
-   * Set the name of data base user.
+   * Set the name of database user.
    *
-   * @param db_user Name of the data base user.
+   * @param db_user Name of the database user.
    */
   inline void set_db_user(const std::string &db_user) {
     db_user_ = db_user;
   }
 
   /**
-   * Set the data base password.
+   * Set the database password.
    *
-   * @param db_password Password to data base.
+   * @param db_password Database password.
    */
   inline void set_db_password(const std::string &db_password) {
     db_password_ = db_password;
@@ -152,14 +152,14 @@ class Spider {
 #endif  // DOXYGEN_SHOULD_SKIP_THIS
 
   /**
-   * Dump the result vector to data base.
+   * Dump the result vector to database.
    *
    * @return 0 on success, -1 otherwise.
    */
   int DumpToDataBase();
 
   /**
-   * Connect to data base server.
+   * Connect to database server.
    *
    * @return 0 if success -1 otherwise.
    */
@@ -171,7 +171,7 @@ class Spider {
   }
 
   /**
-   * Add new file entry in data base.
+   * Add new file entry in database.
    *
    * @param file Full path to file in network which should be added in data
    * base.
@@ -208,7 +208,7 @@ class Spider {
   int NameParser(std::string *name);
 
   /**
-   * Add a file to result vector and if it full - dump it to data base.
+   * Add a file to result vector and if it full - dump it to database.
    *
    * @param name Name to be added.
    *
@@ -226,7 +226,7 @@ class Spider {
   const char *DetectMimeType(const std::string &name);
 
   /**
-   * Initilize file attribute to store MIME type in data base.
+   * Initilize file attribute to store MIME type in database.
    *
    * @return 0 on success, -1 otherwise.
    */
@@ -259,7 +259,7 @@ class Spider {
   std::string db_server_;
 
   /**
-   * Username with access to connect to the specified data base
+   * Username with access to connect to the specified database
    * on specified server.
    */
   std::string db_user_;
@@ -275,7 +275,7 @@ class Spider {
   magic_t cookie_;
 
   /**
-   * Id of attribute to store MIME type in data base.
+   * Id of attribute to store MIME type in database.
    */
   std::shared_ptr<FileAttribute> mime_type_attr_;
 
