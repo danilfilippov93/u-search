@@ -245,15 +245,7 @@ inline int read_config(Config &config, const char *filename) {
     config[name] = value;
   }
 
-  // Save getline error.
-  int error = errno;
-
   fclose(fin);
-
-  if (error != 0) {
-    MSS_FATAL("getline", error);
-    return -1;
-  }
   return 0;
 }
 
