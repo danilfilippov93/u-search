@@ -7,7 +7,7 @@ ifneq ($(VERBOSE),yes)
 MAKEFLAGS += -s
 endif  # VERBOSE
 
-CFLAGS+=-Wall --std=c++11
+CFLAGS+=-Wall --std=gnu++11 -D_GLIBCXX_USE_NANOSLEEP
 
 ifeq ($(DEBUG),yes)
 CFLAGS+=-g -O0 -DMSS_DEBUG
