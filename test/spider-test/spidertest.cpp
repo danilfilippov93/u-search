@@ -147,7 +147,7 @@ void SpiderTest::AddFileEntryInDataBaseTestCase() {
   CPPUNIT_ASSERT_MESSAGE("FileEntry server",
                          server == db_file->get_server_name());
   CPPUNIT_ASSERT_MESSAGE("FileEntry timestamp",
-                         current_time.tv_sec <= db_file->get_timestamp());
+                         0 < db_file->get_timestamp());
   auto param = FileParameter::GetByFileAndAttribute(
       *db_file, spider.get_mime_type_attr());
   CPPUNIT_ASSERT_MESSAGE("No such attribute", param);
@@ -183,7 +183,7 @@ void SpiderTest::DumpToDataBaseTestCase() {
   CPPUNIT_ASSERT_MESSAGE("FileEntry server",
                          "some.server" == db_file->get_server_name());
   CPPUNIT_ASSERT_MESSAGE("FileEntry timestamp",
-                         current_time.tv_sec <= db_file->get_timestamp());
+                         0 < db_file->get_timestamp());
 
   db_file = FileEntry::GetByPathOnServer("path/to/file2", "some.server");
   CPPUNIT_ASSERT_MESSAGE("FileEntry name", "file2" == db_file->get_name());
@@ -192,7 +192,7 @@ void SpiderTest::DumpToDataBaseTestCase() {
   CPPUNIT_ASSERT_MESSAGE("FileEntry server",
                          "some.server" == db_file->get_server_name());
   CPPUNIT_ASSERT_MESSAGE("FileEntry timestamp",
-                         current_time.tv_sec <= db_file->get_timestamp());
+                         0 < db_file->get_timestamp());
 }
 
 void SpiderTest::DetectMimeTypeTestCase() {

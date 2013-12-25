@@ -47,6 +47,10 @@ void FileEntryTest::GetByPathOnServerTestCase() {
   struct timeval time;
   gettimeofday(&time, NULL);
 
+  long timestamp = FileEntry(name, path, server).get_timestamp();
+  CPPUNIT_ASSERT_MESSAGE("Timestamp initalized incorrectly", timestamp > 0);
+
+  // Update timestamp
   FileEntry(name, path, server);
 
   std::shared_ptr<FileEntry> db_file = FileEntry::GetByPathOnServer(path,
@@ -57,7 +61,7 @@ void FileEntryTest::GetByPathOnServerTestCase() {
                          db_file->get_server_name() == server);
   CPPUNIT_ASSERT_MESSAGE("Error in path", db_file->get_file_path() == path);
   CPPUNIT_ASSERT_MESSAGE("Error in timestamp",
-                         db_file->get_timestamp() >= time.tv_sec);
+                         db_file->get_timestamp() >= timestamp);
 
   // Try to add russian file.
   name = ("русский файл");
@@ -74,7 +78,7 @@ void FileEntryTest::GetByPathOnServerTestCase() {
                          db_file->get_server_name() == server);
   CPPUNIT_ASSERT_MESSAGE("Error in path", db_file->get_file_path() == path);
   CPPUNIT_ASSERT_MESSAGE("Error in timestamp",
-                         db_file->get_timestamp() >= time.tv_sec);
+                         db_file->get_timestamp() >= timestamp);
 }
 
 void FileAttributeTest::setUp() {
