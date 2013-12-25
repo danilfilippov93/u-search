@@ -241,7 +241,7 @@ inline int read_config(Config &config, const char *filename) {
 
     value += strspn(value, " \t");
     name[strcspn(name, " \t")] = '\0';
-    value[strcspn(name, " \t")] = '\0';
+    value[strcspn(value, " \t")] = '\0';
     config[name] = value;
   }
 
