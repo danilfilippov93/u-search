@@ -9,13 +9,9 @@ SOURCES+=$(SRCDIR)/test/serverqueue-test/serverqueuetest.cpp
 SOURCES+=$(SRCDIR)/scheduler/serverqueue.cpp
 SOURCES+=$(SRCDIR)/scheduler/schedulerserver.cpp
 SOURCES+=$(SRCDIR)/spider/servermanager.cpp
-
-include ../../config.mk
-
 LIBS+=-lcppunit -lmysqlpp -lsmbclient -lmysqlclient -lcppsockets -ldata_storage -lmagic
 
-.cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -fPIC -c -o $@ $<
+include ../../config.mk
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -o $(DESTDIR)/test/fulltest $(OBJECTS) $(LIBS)

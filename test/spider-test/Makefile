@@ -6,15 +6,9 @@ SOURCES+=$(SRCDIR)/spider/spider.cpp
 SOURCES+=$(SRCDIR)/spider/servermanager.cpp
 SOURCES+=$(SRCDIR)/scheduler/schedulerserver.cpp
 SOURCES+=$(SRCDIR)/scheduler/serverqueue.cpp
-
-include ../../config.mk
-
 LIBS+=-lcppunit -lsmbclient -lmysqlpp -ldata_storage -lmagic
 
-.SUFFIXES: .cpp .o
-
-.cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -fPIC -c -o $@ $<
+include ../../config.mk
 
 $(TARGET): $(OBJECTS)
 	mkdir -p $(DESTDIR)/test
