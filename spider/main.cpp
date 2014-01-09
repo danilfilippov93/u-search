@@ -34,11 +34,11 @@ int main() {
   // Read config from database
   std::string name, server, user, password;
   if (UNLIKELY(read_database_config(&name, &server, &user, &password,
-                                    "../" DATABASE_CONFIG))) {
+                                    DATABASE_CONFIG))) {
     MSS_DEBUG_MESSAGE("failed");
   }
 
-  Spider spider("../" SPIDER_CONFIG, name, server, user, password);
+  Spider spider(SPIDER_CONFIG, name, server, user, password);
   if (spider.get_error()) {
     MSS_DEBUG_ERROR("Spider", spider.get_error());
     return 1;

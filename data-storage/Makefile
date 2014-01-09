@@ -7,11 +7,6 @@ include ../config.mk
 
 LIBS+=-lmysqlclient -lmysqlpp
 
-.SUFFIXES: .cpp .o
-
-.cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -fPIC -c -o $@ $<
-
 $(TARGET): $(OBJECTS)
 	mkdir -p $(DESTDIR)/lib
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -shared -o $(DESTDIR)/lib/libdata_storage.so $(OBJECTS) $(LIBS)

@@ -1,1 +1,1 @@
-localhost
+scheduler = localhost # Scheduler server hostname

@@ -73,7 +73,7 @@ class ServerQueue {
     /**
      * Tell if two servers are equal.
      */
-    bool operator==(Server val) { return get_name() == val.get_name(); }
+    bool operator==(const Server &val) { return get_name() == val.get_name(); }
 
    private:
     /**
@@ -84,6 +84,7 @@ class ServerQueue {
      * Last time server was scanned.
      */
     time_t timestamp_;
+    DISALLOW_COPY_AND_ASSIGN(Server);
   };
 
  public:
@@ -106,47 +107,45 @@ class ServerQueue {
   ~ServerQueue();
 
   /**
-   * Get list of servers to be indexed.
-   *
-   * @return List of servers to be indexed.
-   */
-  std::list<ServerQueue::Server> get_servers_list() const {
-    return *servers_list_;
-  }
-
-  /**
    * Add a server to the list
+   * @param address Server hostname.
    */
   void AddServer(std::string address);
 
   /**
    * Get command handling, task query
+   *
+   * @return Server hostname.
    */
   std::string CmdGet();
 
   /**
    * Get command handling, keepalive
+   * @param address Server hostname.
    */
   void CmdGet(const std::string address);
 
   /**
    * Release command handling
+   * @param address Server hostname.
    */
   void CmdRelease(const std::string address);
 
   /**
     * Read servers list from servers file.
     *
+    * @param servers_file Filename.
     * @return 0 on success, -1 otherwise.
     */
   int ReadServersList(std::string servers_file);
 
- private:
+ protected:
   /**
    * list of the servers.
    */
   std::list<ServerQueue::Server> *servers_list_ = NULL;
 
+ private:
   /**
    * iterator pointing to the next server
    */

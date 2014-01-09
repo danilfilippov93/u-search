@@ -25,9 +25,11 @@
 */
 
 #define EXPAND_MY_SSQLS_STATICS
+#define MYSQLPP_MYSQL_HEADERS_BURIED
 
 #include <string>
 #include <vector>
+#include <mysql++/result.h>
 
 #include "entities.h"
 #include "common-inl.h"
@@ -266,23 +268,30 @@ FileEntry::FileEntry(const int id, const std::string &name,
 FileEntry::FileEntry(const std::string &file_name, const std::string &file_path,
                      const std::string &server_name) {
   try {
-    mysqlpp::Query insert_query = get_db_connection().query();
+    mysqlpp::Query insert_query =
+        get_db_connection().query(
+          "insert into mss_files (name, file_path, server_name) "
+          "values(%0q:name, %1q:file_path, %2q:server_name)"
+          "on duplicate key update last_seen=null;");
     struct timeval current_time;
     gettimeofday(&current_time, NULL);
 
-    mss_files row(0, file_name, file_path, server_name);
+    insert_query.parse();
+    mysqlpp::SimpleResult result =
+        insert_query.execute(file_name, file_path, server_name);
+    if(!result) {
+      db_error_ = std::string(result.info());
+      return;
+    }
 
-    insert_query.replace(row);
-    insert_query.execute();
-
-    id_ = insert_query.insert_id();
-    row.id = id_;
-
-    name_ = file_name;
-    file_path_ = file_path;
-    server_name_ = server_name;
-    timestamp_ = current_time.tv_sec;
-    orig_row_ = row;
+    std::shared_ptr<FileEntry> inserted_row =
+        GetByPathOnServer(file_path, server_name);
+    id_ = inserted_row->id_;
+    name_ = inserted_row->name_;
+    file_path_ = inserted_row->file_path_;
+    server_name_ = inserted_row->server_name_;
+    timestamp_ = inserted_row->timestamp_;
+    orig_row_ = inserted_row->orig_row_;
   } catch(const mysqlpp::Exception &e) {
     db_error_ = std::string(e.what());
   }

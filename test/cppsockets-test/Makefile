@@ -2,15 +2,9 @@
 TARGET:=cppsocketstest
 SOURCES=cppsocketstest.cpp main.cpp
 HEADERS=cppsocketstest.h
-
-include ../../config.mk
-
 LIBS+=-lcppunit -lcppsockets
 
-.SUFFIXES: .cpp .o
-
-.cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -fPIC -c -o $@ $<
+include ../../config.mk
 
 $(TARGET): $(OBJECTS)
 	mkdir -p $(DESTDIR)/test

@@ -2,17 +2,11 @@
 TARGET:=serverqueuetest
 SOURCES=serverqueuetest.cpp main.cpp $(SRCDIR)/scheduler/serverqueue.cpp
 HEADERS=serverqueuetest.h
+LIBS+=-lcppunit
 
 include ../../config.mk
 
-.SUFFIXES: .cpp .o
-
-LIBS+=-lcppunit
-
-.cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -fPIC -c -o $@ $<
-
-serverqueuetest: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	mkdir -p $(DESTDIR)/test
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -o $(DESTDIR)/test/serverqueuetest $(OBJECTS) $(LIBS)
 

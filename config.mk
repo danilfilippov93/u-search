@@ -7,7 +7,7 @@ ifneq ($(VERBOSE),yes)
 MAKEFLAGS += -s
 endif  # VERBOSE
 
-CFLAGS+=-Wall --std=c++11
+CFLAGS+=-Wall --std=gnu++11 -D_GLIBCXX_USE_NANOSLEEP -MD
 
 ifeq ($(DEBUG),yes)
 CFLAGS+=-g -O0 -DMSS_DEBUG
@@ -28,7 +28,14 @@ endif  # TEST_COVERAGE
 
 OBJECTS:=$(SOURCES:.cpp=.o)
 
+.SUFFIXES: .cpp
+
+.cpp.o:
+	$(CC) -c $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -fPIC $< -o $@
+
 all: $(TARGET)
 	@echo SUCCESS: $(TARGET)
+
+-include *.d
 
 .PHONY: all $(TARGET) clean

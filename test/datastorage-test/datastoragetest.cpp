@@ -32,7 +32,7 @@ void FileEntryTest::setUp() {
   CPPUNIT_ASSERT_MESSAGE("Error in reading configuration files",
                          read_database_config(&name_, &server_, &user_,
                                               &password_,
-                                              "../" DATABASE_CONFIG) == 0);
+                                              DATABASE_CONFIG) == 0);
 }
 
 void FileEntryTest::GetByPathOnServerTestCase() {
@@ -47,6 +47,10 @@ void FileEntryTest::GetByPathOnServerTestCase() {
   struct timeval time;
   gettimeofday(&time, NULL);
 
+  long timestamp = FileEntry(name, path, server).get_timestamp();
+  CPPUNIT_ASSERT_MESSAGE("Timestamp initalized incorrectly", timestamp > 0);
+
+  // Update timestamp
   FileEntry(name, path, server);
 
   std::shared_ptr<FileEntry> db_file = FileEntry::GetByPathOnServer(path,
@@ -57,7 +61,7 @@ void FileEntryTest::GetByPathOnServerTestCase() {
                          db_file->get_server_name() == server);
   CPPUNIT_ASSERT_MESSAGE("Error in path", db_file->get_file_path() == path);
   CPPUNIT_ASSERT_MESSAGE("Error in timestamp",
-                         db_file->get_timestamp() >= time.tv_sec);
+                         db_file->get_timestamp() >= timestamp);
 
   // Try to add russian file.
   name = ("русский файл");
@@ -74,14 +78,14 @@ void FileEntryTest::GetByPathOnServerTestCase() {
                          db_file->get_server_name() == server);
   CPPUNIT_ASSERT_MESSAGE("Error in path", db_file->get_file_path() == path);
   CPPUNIT_ASSERT_MESSAGE("Error in timestamp",
-                         db_file->get_timestamp() >= time.tv_sec);
+                         db_file->get_timestamp() >= timestamp);
 }
 
 void FileAttributeTest::setUp() {
   CPPUNIT_ASSERT_MESSAGE("Error in reading configuration files",
                          read_database_config(&name_, &server_, &user_,
                                               &password_,
-                                              "../" DATABASE_CONFIG) == 0);
+                                              DATABASE_CONFIG) == 0);
 }
 
 void FileAttributeTest::ConstructorsTestCase() {
@@ -102,7 +106,7 @@ void FileParameterTest::setUp() {
   CPPUNIT_ASSERT_MESSAGE("Error in reading configuration files",
                          read_database_config(&name_, &server_, &user_,
                                               &password_,
-                                              "../" DATABASE_CONFIG) == 0);
+                                              DATABASE_CONFIG) == 0);
 }
 
 void FileParameterTest::ConstructorsTestCase() {
@@ -128,6 +132,13 @@ void FileParameterTest::ConstructorsTestCase() {
   // Create a parameter for attribute and entry
   FileParameter(entry, attr, "test-param", 0, true);
   auto param = FileParameter::GetByFileAndAttribute(entry, attr);
+  CPPUNIT_ASSERT_MESSAGE("FileParameter", param);
+  CPPUNIT_ASSERT_MESSAGE("Wrong number of parameters", param->size() == 1);
+
+  // Update an entry
+  FileEntry updated_entry(name, path, server);
+
+  param = FileParameter::GetByFileAndAttribute(updated_entry, attr);
   CPPUNIT_ASSERT_MESSAGE("FileParameter", param);
   CPPUNIT_ASSERT_MESSAGE("Wrong number of parameters", param->size() == 1);
 }

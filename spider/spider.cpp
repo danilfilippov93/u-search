@@ -102,28 +102,21 @@ Spider::Spider()
 }
 
 int Spider::ReadConfig(const std::string &config) {
-  FILE *fin = fopen(config.c_str(), "r");
+  Config conf;
 
-  if (!fin) {
+  if (read_config(conf, config.c_str()) == -1) {
     DetectError();
-    MSS_FATAL("fopen", errno);
+    MSS_ERROR_MESSAGE("spider can't read configuration file");
     return -1;
   }
 
-  char *buf = NULL;
-  size_t size = 0;
+  for (auto i = conf.begin(); i != conf.end(); i++)
+    if (i->first == "scheduler") {
+      scheduler_ = i->second;
+    } else {
+      /* Unknown option, skip. */
+    }
 
-  if (getline(&buf, &size, fin) < 0) {
-    DetectError();
-    MSS_FATAL("getline", errno);
-    return -1;
-  }
-
-  scheduler_.assign(buf);
-  scheduler_.erase(scheduler_.end() - 1);
-
-  free(buf);
-  fclose(fin);
   return 0;
 }
 
@@ -131,7 +124,7 @@ Spider::Spider(const std::string &config,
                const std::string &db_name,
                const std::string &db_server,
                const std::string &db_user,
-               const std::string &db_password) {
+               const std::string &db_password) : Spider() {
   if (ReadConfig(config) == -1)
     return;
 
