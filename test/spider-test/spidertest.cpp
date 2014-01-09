@@ -66,7 +66,7 @@ void SpiderTest::tearDown() {
 }
 
 void SpiderTest::ConstructorsTestCase() {
-  Spider spider;
+  Spider spider(SPIDER_CONFIG, name_, server_, user_, password_);
   CPPUNIT_ASSERT(!spider.get_error());
 }
 

@@ -125,11 +125,14 @@ Spider::Spider(const std::string &config,
                const std::string &db_server,
                const std::string &db_user,
                const std::string &db_password) : Spider() {
+  if (error_)
+    return;
+
   if (ReadConfig(config) == -1)
     return;
 
   pserver_manager_ = new(std::nothrow) ServerManager(scheduler_);
-  if (UNLIKELY(pserver_manager_ == NULL)) {
+  if (pserver_manager_ == NULL) {
     error_ = ENOMEM;
     MSS_FATAL("pserver_manager_", error_);
     return;
@@ -172,7 +175,7 @@ Spider::~Spider() {
   if (rmdir(TMPDIR))
     MSS_ERROR("rmdir", errno);
 
-  if (pserver_manager_ != NULL)
+  if (pserver_manager_)
     delete pserver_manager_;
 
   if (cookie_)

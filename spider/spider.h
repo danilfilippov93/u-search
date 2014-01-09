@@ -64,14 +64,6 @@ class Spider {
          const std::string &db_user,
          const std::string &db_password);
 
-  /**
-   * Read configuration file.
-   *
-   * @param config Configuration file name.
-   * @return -1 on error, 0 otherwise
-   */
-  int ReadConfig(const std::string &config);
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /**
    * Destructor.
@@ -234,6 +226,14 @@ class Spider {
 
  private:
   /**
+   * Read configuration file.
+   *
+   * @param config Configuration file name.
+   * @return -1 on error, 0 otherwise
+   */
+  int ReadConfig(const std::string &config);
+
+  /**
    * Save last occured error in error_.
    */
   inline void DetectError() { error_ = errno; }
@@ -279,7 +279,7 @@ class Spider {
    */
   std::shared_ptr<FileAttribute> mime_type_attr_;
 
-  /*
+  /**
    * Scheduler hostname.
    */
   std::string scheduler_;
