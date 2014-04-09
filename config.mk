@@ -38,4 +38,6 @@ all: $(TARGET)
 
 -include *.d
 
+.DELETE_ON_ERROR:
+
 .PHONY: all $(TARGET) clean
