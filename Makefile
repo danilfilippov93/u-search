@@ -17,10 +17,11 @@ libdata_storage:
 test: libcppsockets libdata_storage spider scheduler
 	+cd $(SRCDIR)/test && $(MAKE)
 
-copyfiles: database.dat.example servers.dat.example
+copyfiles: database.conf servers.conf spider.conf
 	mkdir -p $(DESTDIR)/etc/u-search
-	cp database.dat.example $(DESTDIR)/etc/u-search
-	cp servers.dat.example $(DESTDIR)/etc/u-search
+	cp database.conf $(DESTDIR)/etc/u-search
+	cp servers.conf $(DESTDIR)/etc/u-search
+	cp spider.conf $(DESTDIR)/etc/u-search
 
 $(TARGET): test doc
 

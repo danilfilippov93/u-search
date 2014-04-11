@@ -10,7 +10,7 @@
 #define SCHEDULERPORT "2050"
 
 // Spider configuration file.
-#define SPIDER_CONFIG "../etc/u-search/spider.dat"
+#define SPIDER_CONFIG "../etc/u-search/spider.conf"
 
 // Client can choose any source port.
 // It is better not to use SCHEDULERPORT so scheduler and spider can
@@ -18,7 +18,7 @@
 #define SPIDERPORT "2051"
 
 // Database configuration file.
-#define DATABASE_CONFIG "../etc/u-search/database.dat"
+#define DATABASE_CONFIG "../etc/u-search/database.conf"
 
 // Size of buffer which used to get smb directory entries.
 #define BUF_SIZE 512
