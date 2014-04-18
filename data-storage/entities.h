@@ -142,6 +142,10 @@ class DatabaseEntity {
      */
     static inline std::string get_db_error() { return db_error_; }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    virtual ~DatabaseEntity() {}
+#endif  // DOXYGEN_SHOULD_SKIP_THIS
+
   protected:
     /**
      * Get database connection.
