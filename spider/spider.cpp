@@ -45,12 +45,11 @@ static void libsmbmm_guest_auth_smbc_get_data(const char *server,
                                               char *workgroup, int wgmaxlen,
                                               char *username, int unmaxlen,
                                               char *password, int pwmaxlen) {
-  strncpy(username, "Guest", unmaxlen - 1);
-  strncpy(password, "", pwmaxlen - 1);
-  strncpy(workgroup, "", wgmaxlen - 1);
-  // Hack to prevent qt warnings
-  server = server;
-  share = share;
+  strncpy(username, "Guest", size_t(unmaxlen) - 1);
+  strncpy(password, "", size_t(pwmaxlen) - 1);
+  strncpy(workgroup, "", size_t(wgmaxlen) - 1);
+  (void)server;
+  (void)share;
 }
 
 Spider::Spider()
@@ -205,6 +204,7 @@ void Spider::Run() {
 int Spider::ScanSMBDir(const std::string &dir) {
   int directory_handler = 0, dirc = 0, dsize = 0;
   char *dirp = NULL;
+  struct smbc_dirent *entry = NULL;
   char buf[BUF_SIZE];
 
   // Open given smb directory.
@@ -222,9 +222,10 @@ int Spider::ScanSMBDir(const std::string &dir) {
     dirp = static_cast<char *>(buf);
 
     // Get dir content which can placed in buf.
-    if (UNLIKELY((dirc = smbc_getdents(directory_handler,
-                                       reinterpret_cast<struct smbc_dirent *>(dirp),
-                                       sizeof(buf)))) < 0) {
+    if (UNLIKELY((dirc = smbc_getdents(
+                                static_cast<unsigned int>(directory_handler),
+                                reinterpret_cast<struct smbc_dirent *>(dirp),
+                                sizeof(buf)))) < 0) {
       DetectError();
       MSS_ERROR("smbc_getdents", error_);
       return -1;
@@ -236,12 +237,12 @@ int Spider::ScanSMBDir(const std::string &dir) {
 
     // Put readen content in list
     while (dirc > 0) {
-      dsize = reinterpret_cast<struct smbc_dirent *>(dirp)->dirlen;
+      entry = reinterpret_cast<struct smbc_dirent *>(dirp);
+      dsize = static_cast<int>(entry->dirlen);
 
       // Ignoring "." and ".."
-      if ((strcmp(reinterpret_cast<struct smbc_dirent *>(dirp)->name, ".") == 0) ||
-          (strcmp(reinterpret_cast<struct smbc_dirent *>(dirp)->name, "..") == 0)) {
-        dirp += dsize;  // Promote pointer
+      if ((strcmp(entry->name, ".") == 0) || (strcmp(entry->name, "..") == 0)) {
+        dirp += dsize;  // Use char * to promote pointer exactly on dsize
         dirc -= dsize;  // Decrease size
         continue;
       }
@@ -251,10 +252,10 @@ int Spider::ScanSMBDir(const std::string &dir) {
         case SMBC_SERVER:
         case SMBC_FILE_SHARE:
         case SMBC_DIR:
-          ScanSMBDir(dir + "/" + reinterpret_cast<struct smbc_dirent *>(dirp)->name);
+          ScanSMBDir(dir + "/" + entry->name);
           break;
         case SMBC_FILE:
-          AddSMBFile(dir + "/" + reinterpret_cast<struct smbc_dirent *>(dirp)->name);
+          AddSMBFile(dir + "/" + entry->name);
           break;
         case SMBC_PRINTER_SHARE:
         case SMBC_COMMS_SHARE:
@@ -267,7 +268,7 @@ int Spider::ScanSMBDir(const std::string &dir) {
           assert(0);  // This can't happen
       }
 
-      dirp += dsize;  // Promote pointer
+      dirp += dsize;  // Use char * to promote pointer exactly on dsize
       dirc -= dsize;  // Decrease size
     }
   }
