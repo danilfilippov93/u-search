@@ -14,7 +14,9 @@ scheduler:
 libdata_storage:
 	+cd $(SRCDIR)/data-storage && $(MAKE)
 
-test: libcppsockets libdata_storage spider scheduler
+core: libcppsockets libdata_storage spider scheduler
+
+test: core
 	+cd $(SRCDIR)/test && $(MAKE)
 
 copyfiles: database.conf servers.conf spider.conf
