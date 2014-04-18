@@ -223,7 +223,7 @@ int Spider::ScanSMBDir(const std::string &dir) {
 
     // Get dir content which can placed in buf.
     if (UNLIKELY((dirc = smbc_getdents(directory_handler,
-                                       (struct smbc_dirent *)dirp,
+                                       reinterpret_cast<struct smbc_dirent *>(dirp),
                                        sizeof(buf)))) < 0) {
       DetectError();
       MSS_ERROR("smbc_getdents", error_);
@@ -236,25 +236,25 @@ int Spider::ScanSMBDir(const std::string &dir) {
 
     // Put readen content in list
     while (dirc > 0) {
-      dsize = ((struct smbc_dirent *)dirp)->dirlen;
+      dsize = reinterpret_cast<struct smbc_dirent *>(dirp)->dirlen;
 
       // Ignoring "." and ".."
-      if ((strcmp(((struct smbc_dirent *)dirp)->name, ".") == 0) ||
-          (strcmp(((struct smbc_dirent *)dirp)->name, "..") == 0)) {
+      if ((strcmp(reinterpret_cast<struct smbc_dirent *>(dirp)->name, ".") == 0) ||
+          (strcmp(reinterpret_cast<struct smbc_dirent *>(dirp)->name, "..") == 0)) {
         dirp += dsize;  // Promote pointer
         dirc -= dsize;  // Decrease size
         continue;
       }
 
-      switch (((struct smbc_dirent *)dirp)->smbc_type) {
+      switch (reinterpret_cast<struct smbc_dirent *>(dirp)->smbc_type) {
         case SMBC_WORKGROUP:
         case SMBC_SERVER:
         case SMBC_FILE_SHARE:
         case SMBC_DIR:
-          ScanSMBDir(dir + "/" + ((struct smbc_dirent *)dirp)->name);
+          ScanSMBDir(dir + "/" + reinterpret_cast<struct smbc_dirent *>(dirp)->name);
           break;
         case SMBC_FILE:
-          AddSMBFile(dir + "/" + ((struct smbc_dirent *)dirp)->name);
+          AddSMBFile(dir + "/" + reinterpret_cast<struct smbc_dirent *>(dirp)->name);
           break;
         case SMBC_PRINTER_SHARE:
         case SMBC_COMMS_SHARE:
