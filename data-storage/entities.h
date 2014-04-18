@@ -46,19 +46,19 @@ sql_create_5(mss_parameters, 2, 5,
              mysqlpp::sql_int, file_id,
              mysqlpp::sql_text, str_value,
              mysqlpp::sql_int, num_value,
-             mysqlpp::sql_boolean, bool_value);
+             mysqlpp::sql_boolean, bool_value)
 
 sql_create_3(mss_attributes, 1, 3,
              mysqlpp::sql_int, id,
              mysqlpp::sql_varchar, name,
-             mysqlpp::sql_enum, type);
+             mysqlpp::sql_enum, type)
 
 sql_create_5(mss_files, 1, 4,
              mysqlpp::sql_int, id,
              mysqlpp::sql_varchar, name,
              mysqlpp::sql_varchar, file_path,
              mysqlpp::sql_varchar, server_name,
-             mysqlpp::sql_timestamp, last_seen);
+             mysqlpp::sql_timestamp, last_seen)
 
 /**
  * Class to work with database.
