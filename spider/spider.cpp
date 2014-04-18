@@ -247,46 +247,24 @@ int Spider::ScanSMBDir(const std::string &dir) {
       }
 
       switch (((struct smbc_dirent *)dirp)->smbc_type) {
-        case SMBC_WORKGROUP: {
+        case SMBC_WORKGROUP:
+        case SMBC_SERVER:
+        case SMBC_FILE_SHARE:
+        case SMBC_DIR:
           ScanSMBDir(dir + "/" + ((struct smbc_dirent *)dirp)->name);
           break;
-        }
-        case SMBC_SERVER: {
-          ScanSMBDir(dir + "/" + ((struct smbc_dirent *)dirp)->name);
+        case SMBC_FILE:
+          AddSMBFile(dir + "/" + ((struct smbc_dirent *)dirp)->name);
           break;
-        }
-        case SMBC_FILE_SHARE: {
-          ScanSMBDir(dir + "/" + ((struct smbc_dirent *)dirp)->name);
-          break;
-        }
-        case SMBC_PRINTER_SHARE: {
+        case SMBC_PRINTER_SHARE:
+        case SMBC_COMMS_SHARE:
+        case SMBC_IPC_SHARE:
+        case SMBC_LINK:
           // Do nothing
           break;
-        }
-        case SMBC_COMMS_SHARE: {
-          // Do nothing
-          break;
-        }
-        case SMBC_IPC_SHARE: {
-          // Do nothing
-          break;
-        }
-        case SMBC_DIR: {
-          ScanSMBDir(dir + "/" + ((struct smbc_dirent *)dirp)->name);
-          break;
-        }
-        case SMBC_FILE: {
-          AddSMBFile(dir+"/"+((struct smbc_dirent *)dirp)->name);
-          break;
-        }
-        case SMBC_LINK: {
-          // Do nothing
-          break;
-        }
-        default: {
+        default:
           MSS_FATAL_MESSAGE("Unknown smb entry type");
           assert(0);  // This can't happen
-        }
       }
 
       dirp += dsize;  // Promote pointer
