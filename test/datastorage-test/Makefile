@@ -11,4 +11,4 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -o $(DESTDIR)/test/datastoragetest $(OBJECTS) $(LIBS)
 
 clean:
-	rm -rf $(DESTDIR)/test/datastoragetest *.o *.d *.gcov *.gcda *.gcno
+	$(RM) *.o *.d *.gcov *.gcda *.gcno

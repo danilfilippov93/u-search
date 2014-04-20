@@ -11,4 +11,4 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -o $(DESTDIR)/test/cppsocketstest $(OBJECTS) $(LIBS)
 
 clean:
-	rm -rf *.o $(DESTDIR)/test/cppsocketstest *.d *.gcov *.gcda *.gcno
+	$(RM) *.o *.d *.gcov *.gcda *.gcno

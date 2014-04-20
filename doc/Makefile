@@ -16,6 +16,6 @@ $(TARGET): parse copyfiles
 	cp latex/refman.pdf u-search.pdf
 
 clean:
-	rm -rf latex html
+	$(RM) latex html
 
 .PHONY: parse copyfiles doxygen

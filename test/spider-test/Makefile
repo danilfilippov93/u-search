@@ -15,4 +15,4 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -o $(DESTDIR)/test/spidertest $(OBJECTS) $(LIBS)
 
 clean:
-	rm -rf $(DESTDIR)/test/spidertest *.o *.d *.gcov *.gcda *.gcno
+	$(RM) *.o *.d *.gcov *.gcda *.gcno

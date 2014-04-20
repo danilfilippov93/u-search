@@ -11,4 +11,4 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDEPATH) $(DEFINES) -o $(DESTDIR)/test/serverqueuetest $(OBJECTS) $(LIBS)
 
 clean:
-	rm -rf $(DESTDIR)/test/serverqueuetest *.o *.d *.gcov *.gcda *.gcno
+	$(RM) *.o *.d *.gcov *.gcda *.gcno

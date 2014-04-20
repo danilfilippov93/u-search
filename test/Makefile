@@ -20,7 +20,6 @@ fulltest:
 test: cppsocketstest datastoragetest spidertest serverqueuetest fulltest
 
 clean:
-	rm -rf $(DESTDIR)/test
 	cd cppsockets-test && make clean
 	cd datastorage-test && make clean
 	cd spider-test && make clean

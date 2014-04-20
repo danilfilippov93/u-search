@@ -1,6 +1,8 @@
 # -*- makefile -*-
 SRCDIR:= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
+RM:=rm -rf
+
 CC:=g++
 
 ifneq ($(VERBOSE),yes)
