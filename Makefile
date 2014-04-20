@@ -19,14 +19,14 @@ core: libcppsockets libdata_storage spider scheduler
 test: core
 	+cd $(SRCDIR)/test && $(MAKE)
 
-copyfiles: database.conf servers.conf spider.conf
+copyfiles:
 	mkdir -p $(DESTDIR)/etc/u-search
 	if [ ! -e $(DESTDIR)/etc/u-search/database.conf ]; \
-	then cp database.conf $(DESTDIR)/etc/u-search; fi
+	then cp config/database.conf $(DESTDIR)/etc/u-search; fi
 	if [ ! -e $(DESTDIR)/etc/u-search/servers.conf ]; \
-	then cp servers.conf $(DESTDIR)/etc/u-search; fi
+	then cp config/servers.conf $(DESTDIR)/etc/u-search; fi
 	if [ ! -e $(DESTDIR)/etc/u-search/spider.conf ]; \
-	then cp spider.conf $(DESTDIR)/etc/u-search; fi
+	then cp config/spider.conf $(DESTDIR)/etc/u-search; fi
 
 $(TARGET): test doc
 
