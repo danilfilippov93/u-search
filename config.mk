@@ -7,7 +7,11 @@ ifneq ($(VERBOSE),yes)
 MAKEFLAGS += -s
 endif  # VERBOSE
 
-CFLAGS+=-Wall --std=gnu++11 -D_GLIBCXX_USE_NANOSLEEP -MD
+WARNING_FLAGS += -Wall -Wundef -Wwrite-strings -Wpointer-arith -Wformat-nonliteral  \
+                 -Wextra -pedantic -Woverloaded-virtual -Wctor-dtor-privacy         \
+                 -Wnon-virtual-dtor -Wold-style-cast -Wconversion -Wsign-conversion \
+                 -Winit-self -Wunreachable-code -Wtype-limits
+CFLAGS+=$(WARNING_FLAGS) --std=gnu++11 -D_GLIBCXX_USE_NANOSLEEP -MD
 
 ifeq ($(DEBUG),yes)
 CFLAGS+=-g -O0 -DMSS_DEBUG
