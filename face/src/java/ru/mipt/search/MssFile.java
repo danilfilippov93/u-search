@@ -19,8 +19,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(
-        name = "mss_files")
+@Table(name = "mss_files")
 @NamedQueries({
         @NamedQuery(
                 name = "getFileById", query = "select file from MssFile file where file.id = :id"),
