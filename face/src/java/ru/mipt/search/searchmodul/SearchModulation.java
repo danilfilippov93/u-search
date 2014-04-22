@@ -4,14 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**
- * Created with IntelliJ IDEA.
- * User: danil
- * Date: 06.04.14
- * Time: 15:09
- * To change this template use File | Settings | File Templates.
- */
-
 public class SearchModulation implements SearchModul {
     public List<Words> listOfWords = new ArrayList<Words>();
     public List listOfStringWords = new ArrayList();
@@ -28,7 +20,6 @@ public class SearchModulation implements SearchModul {
             listOfWords.add(i,new Words(listOfStringWords.get(i).toString()));
         }
     }
-
 
     public List stringToWords(String searchString) {//разбивает строку на слова
         StringTokenizer token = new StringTokenizer(searchString.toLowerCase());
@@ -60,7 +51,6 @@ public class SearchModulation implements SearchModul {
             }else{
                 copyList.add(words.get(i).toString());
             }
-
         }
         return copyList;
     }

@@ -1,16 +1,13 @@
 package ru.mipt.search.database;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import ru.mipt.search.MssFile;
-
 
 public class MssFileLocator {
     public final static EntityManagerFactory mssEntityManagerFactory = Persistence
@@ -61,7 +58,6 @@ public class MssFileLocator {
         } finally {
             dbEntityManager.close();
         }
-
     }
 
     public static List<MssFile> findFilesByNameAndServer(String nameContains, String serverName,

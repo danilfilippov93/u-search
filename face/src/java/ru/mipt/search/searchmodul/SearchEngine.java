@@ -2,7 +2,6 @@ package ru.mipt.search.searchmodul;
 
 import ru.mipt.search.MssFile;
 import ru.mipt.search.database.MssFileLocator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +10,6 @@ public class SearchEngine {
     MssFileLocator locator = new MssFileLocator();
     SearchModulation searchmod;
     boolean findByServer = false;
-
-
 
     public SearchEngine(String searchString) {
         searchmod = new SearchModulation (searchString);

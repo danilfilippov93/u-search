@@ -42,6 +42,12 @@
                         #{item.serverName}
                 </h:column>
             </h:dataTable>
+            <h:commandButton id="prevbutton" value="Prev" action="#{searchBean.toPreviousPage()}">
+                <f:ajax execute="prevbutton" render="output" />
+            </h:commandButton>
+            <h:commandButton id="nextbutton" value="Next" action="#{searchBean.toNextPage()}">
+                <f:ajax execute="nextbutton" render="output" />
+            </h:commandButton>
         </h:form>
     </h:body>
 </html>

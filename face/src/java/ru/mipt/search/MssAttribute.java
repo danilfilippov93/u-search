@@ -1,10 +1,8 @@
 package ru.mipt.search;
 
-
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
-
 
 @Entity
 @Table(name="mss_attributes")
@@ -60,15 +58,13 @@ public class MssAttribute implements Serializable {
 	public MssParameter addMssParameter(MssParameter mssParameter) {
 		getMssParameters().add(mssParameter);
 		mssParameter.setMssAttribute(this);
-
-		return mssParameter;
+        return mssParameter;
 	}
 
 	public MssParameter removeMssParameter(MssParameter mssParameter) {
 		getMssParameters().remove(mssParameter);
 		mssParameter.setMssAttribute(null);
-
-		return mssParameter;
+        return mssParameter;
 	}
 
 }

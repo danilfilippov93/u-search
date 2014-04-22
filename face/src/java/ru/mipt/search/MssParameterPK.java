@@ -1,10 +1,7 @@
 package ru.mipt.search;
 
-//package ru.mipt.smbsearch.database.entities;
-
 import java.io.Serializable;
 import javax.persistence.*;
-
 /**
  * The primary key class for the mss_parameters database table.
  */
@@ -42,9 +39,7 @@ public class MssParameterPK implements Serializable {
 			return false;
 		}
 		MssParameterPK castOther = (MssParameterPK)other;
-		return 
-			(this.attrId == castOther.attrId)
-			&& (this.fileId == castOther.fileId);
+		return (this.attrId == castOther.attrId) && (this.fileId == castOther.fileId);
 	}
 
 	public int hashCode() {
@@ -52,7 +47,8 @@ public class MssParameterPK implements Serializable {
 		int hash = 17;
 		hash = hash * prime + this.attrId;
 		hash = hash * prime + this.fileId;
-		
 		return hash;
 	}
+
 }
+

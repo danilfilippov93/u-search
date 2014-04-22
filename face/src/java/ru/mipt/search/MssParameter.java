@@ -1,11 +1,7 @@
 package ru.mipt.search;
 
-//package ru.mipt.smbsearch.database.entities;
-
 import java.io.Serializable;
 import javax.persistence.*;
-
-
 /**
  * The persistent class for the mss_parameters database table.
  * 
