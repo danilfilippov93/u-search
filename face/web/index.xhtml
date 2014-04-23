@@ -5,50 +5,74 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
-        <h:outputStylesheet library="style" name="style.css" />
+        <h:outputStylesheet library="style" name="usearch.css" />
     </h:head>
     <h:body>
-        <h3>uSearch</h3>
-        <h:form>
-            <h:inputText id="name" class="TTWForm-container"  value="#{searchBean.searchString}"></h:inputText>
-            <h:commandButton  class="button" value="Search" action="#{searchBean.push()}"/>
-            <h:form>
-                Find by server
-                <input type="checkbox" name="check1" value="#{searchBean.findByServer}"/>
-            </h:form>
-            <h:dataTable id="output" value="#{searchBean.lib}" var="item"
-                         styleClass="order-table"
-                         headerClass="order-table-header"
-                         rowClasses="order-table-odd-row,order-table-even-row"
-                         >
-                <h:column>
-                    <f:facet name="header">ID</f:facet>
-                        #{item.id}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Name</f:facet>
-                        #{item.name}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Path</f:facet>
-                        #{item.filePath}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Last seen</f:facet>
-                        #{item.lastSeen}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Serever name</f:facet>
-                        #{item.serverName}
-                </h:column>
-            </h:dataTable>
-            <h:commandButton id="prevbutton" value="Prev" action="#{searchBean.toPreviousPage()}">
-                <f:ajax execute="prevbutton" render="output" />
-            </h:commandButton>
-            <h:commandButton id="nextbutton" value="Next" action="#{searchBean.toNextPage()}">
-                <f:ajax execute="nextbutton" render="output" />
-            </h:commandButton>
-        </h:form>
+        <div class="main">
+            <div class="header">
+                <div class="left-logo">
+                    <h3>uSearch</h3>
+                </div>
+                <div class="search-box">
+                    <div class="search-container">
+                        <h:form>
+                            <h:inputText class="searchInput" value="#{searchBean.searchString}"></h:inputText>
+                            <h:commandButton class="searchButton" value="uSearch" action="#{searchBean.push()}"/>
+                        </h:form>
+                    </div>
+                    <h:form>
+                        Find by server
+                        <input type="checkbox" name="check1" value="#{searchBean.findByServer}"/>
+                    </h:form>
+                </div>
+                <div class="toolkit"></div>
+            </div>
+            <div class="content">
+                <div class="search-results">
+                    <h:form>
+
+
+
+                        <h:dataTable id="output" value="#{searchBean.lib}" var="item"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row"
+                                >
+                            <h:column>
+                                <f:facet name="header">ID</f:facet>
+                                #{item.id}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Name</f:facet>
+                                #{item.name}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Path</f:facet>
+                                #{item.filePath}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Last seen</f:facet>
+                                #{item.lastSeen}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Serever name</f:facet>
+                                #{item.serverName}
+                            </h:column>
+                        </h:dataTable>
+                        <h:commandButton id="prevbutton" value="Prev" action="#{searchBean.toPreviousPage()}">
+                            <f:ajax execute="prevbutton" render="output" />
+                        </h:commandButton>
+                        <h:commandButton id="nextbutton" value="Next" action="#{searchBean.toNextPage()}">
+                            <f:ajax execute="nextbutton" render="output" />
+                        </h:commandButton>
+                    </h:form>
+                </div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+
+
     </h:body>
 </html>
 

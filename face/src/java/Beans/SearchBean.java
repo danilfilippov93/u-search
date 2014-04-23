@@ -39,7 +39,11 @@ public class SearchBean {
 
     public List<MssFile> getLib() {
         if(lib != null)
-            return lib.subList(currentPage * countElementsOnPage, countElementsOnPage *(currentPage + 1));
+            try {
+                return lib.subList(currentPage * countElementsOnPage, countElementsOnPage *(currentPage + 1));
+            } catch (IndexOutOfBoundsException e) {
+            }
+
         return null;
     }
 
