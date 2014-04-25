@@ -17,29 +17,42 @@
                 <input type="checkbox" name="check1" value="#{searchBean.findByServer}"/>
             </h:form>
             <h:dataTable id="output" value="#{searchBean.lib}" var="item"
-                         styleClass="order-table"
-                         headerClass="order-table-header"
-                         rowClasses="order-table-odd-row,order-table-even-row"
+
                          >
                 <h:column>
-                    <f:facet name="header">ID</f:facet>
-                        #{item.id}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Name</f:facet>
-                        #{item.name}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Path</f:facet>
-                        #{item.filePath}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Last seen</f:facet>
-                        #{item.lastSeen}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Serever name</f:facet>
-                        #{item.serverName}
+                <div class="search-result">
+                    <div class="left-search-tool">
+                        <img class="server-indicator" src="led.png" alt="server" width="10px" />
+                    </div>
+                    <div class="right-search-tool">
+                        <h3 class="file-name">
+                            <a class="file-name-link" href="http://vk.com/lowara">#{item.name}</a>
+                        </h3>
+                        <div class="file-path">
+                            <a class="file-path-link" href="#{item.filePath}"> #{item.filePath}</a>
+                        </div>
+                        <div class="file-info">
+                            <span class="attribute-name">size:</span> 169834KB
+                            <span class="attribute-name">mod.date:</span> #{item.lastSeen}
+                            <span class="attribute-name">file type:</span> text
+                        </div>
+                        <div class="file-attributes">
+                                <div class="attribute-group"><span class="attribute-name">server name</span> #{item.serverName}</div>
+                                <div class="attribute-group"><span class="attribute-name">mod.date:</span> 13/08/12</div>
+                                <div class="attribute-group"><span class="attribute-name">file type:</span> text</div>
+                                <div class="attribute-group"><span class="attribute-name">sizeQw:</span> 169834KB</div>
+                                <div class="attribute-group"><span class="attribute-name">mod.wdate:</span> 13/08</div>
+                                <div class="attribute-group"><span class="attribute-name">file type:</span> text</div>
+                                <div class="attribute-group"><span class="attribute-name">size:</span> 169834KB</div>
+                                <div class="attribute-group"><span class="attribute-name">mod.date:</span> 13/08/12</div>
+                                <div class="attribute-group"><span class="attribute-name">fileweqtype:</span> text</div>
+                                <div class="attribute-group"><span class="attribute-name">size:</span> 169834KB</div>
+                                <div class="attribute-group"><span class="attribute-name">mod.sdsddate:</span> 13/08/12</div>
+                                <div class="attribute-group"><span class="attribute-name">file type:</span> text</div>
+                        </div>
+                        <div class="search-footer">copy</div>
+                    </div>
+                </div>
                 </h:column>
             </h:dataTable>
             <h:commandButton id="prevbutton" value="Prev" action="#{searchBean.toPreviousPage()}">
