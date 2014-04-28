@@ -8,6 +8,10 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="mss_parameters")
+@NamedQueries({
+        @NamedQuery(
+                name = "getParameterByFile",
+                query = "select parameter from MssParameter parameter where parameter.mssFile = :file")})
 public class MssParameter implements Serializable {
 	private static final long serialVersionUID = 1L;
 

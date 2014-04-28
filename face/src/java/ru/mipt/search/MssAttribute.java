@@ -11,10 +11,13 @@ public class MssAttribute implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private int id;
+    @Column(name = "id")
+    private int id;
 
-	private String name;
+    @Column(name = "name")
+    private String name;
 
+    @Column(name = "type")
 	private String type;
 
 	@OneToMany(mappedBy="mssAttribute")

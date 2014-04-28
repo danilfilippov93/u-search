@@ -7,7 +7,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
 import ru.mipt.search.MssFile;
+import ru.mipt.search.MssParameter;
 
 public class MssFileLocator {
     public final static EntityManagerFactory mssEntityManagerFactory = Persistence
@@ -87,6 +89,21 @@ public class MssFileLocator {
             query.setParameter("server", "%" + serverName + "%");
             query.setFirstResult(firstResult);
             query.setMaxResults(maxResults);
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            dbEntityManager.close();
+        }
+    }
+
+    public static List<MssParameter> findParameterByFile(MssFile file, int firstResult, int maxResults) {
+        EntityManager dbEntityManager = getEntityManager();
+        try {
+            Query query = dbEntityManager.createNamedQuery("getParameterByFile");
+            query.setFirstResult(firstResult);
+            query.setMaxResults(maxResults);
+            query.setParameter("file", file);
             return query.getResultList();
         } catch (NoResultException e) {
             return null;

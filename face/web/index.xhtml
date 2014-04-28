@@ -3,7 +3,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://java.sun.com/jstl/core">
 <h:head>
     <title>Facelet Title</title>
     <h:outputStylesheet library="style" name="usearch.css"/>
@@ -53,36 +53,15 @@
                                         <span class="attribute-name">file type:</span> text
                                     </div>
                                     <div class="file-attributes">
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">server name</span> #{item.serverName}</div>
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">mod.date:</span> 13/08/12
-                                        </div>
-                                        <div class="attribute-group"><span class="attribute-name">file type:</span> text
-                                        </div>
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">sizeQw:</span> 169834KB
-                                        </div>
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">mod.wdate:</span> 13/08
-                                        </div>
-                                        <div class="attribute-group"><span class="attribute-name">file type:</span> text
-                                        </div>
-                                        <div class="attribute-group"><span class="attribute-name">size:</span> 169834KB
-                                        </div>
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">mod.date:</span> 13/08/12
-                                        </div>
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">fileweqtype:</span> text
-                                        </div>
-                                        <div class="attribute-group"><span class="attribute-name">size:</span> 169834KB
-                                        </div>
-                                        <div class="attribute-group"><span
-                                                class="attribute-name">mod.sdsddate:</span> 13/08/12
-                                        </div>
-                                        <div class="attribute-group"><span class="attribute-name">file type:</span> text
-                                        </div>
+                                        #{item.}
+                                        <c:forEach items="#{item.mssParameters}" var="param">
+                                            <div class="attribute-group">
+                                                <span class="attribute-name">
+                                                    #{param.mssAttribute.name}
+                                                </span>
+                                                #{param.numValue}
+                                            </div>
+                                        </c:forEach>
                                     </div>
                                     <div class="search-footer">copy</div>
                                 </div>

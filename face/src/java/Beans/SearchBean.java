@@ -1,6 +1,8 @@
 package Beans;
 
+import ru.mipt.search.MssAttribute;
 import ru.mipt.search.MssFile;
+import ru.mipt.search.MssParameter;
 import ru.mipt.search.searchmodul.*;
 
 import javax.faces.bean.ManagedBean;
@@ -17,6 +19,7 @@ public class SearchBean {
     private String searchString;
     private boolean findByServer = false;
     List<MssFile> lib = null;
+    List<MssAttribute> attributesList = null;
 
     public void searchBean() {
     }
@@ -69,5 +72,12 @@ public class SearchBean {
             currentPage--;
     }
 
+    public List<MssAttribute> getAttributesList() {
+        return attributesList;
+    }
+
+    public void setAttributesList(List<MssAttribute> attributesList) {
+        this.attributesList = attributesList;
+    }
 }
 
