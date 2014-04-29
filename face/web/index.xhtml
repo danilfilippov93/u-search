@@ -3,7 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://java.sun.com/jstl/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jstl/core">
 <h:head>
     <title>Facelet Title</title>
     <h:outputStylesheet library="style" name="usearch.css"/>
@@ -11,30 +12,26 @@
 </h:head>
 <h:body>
     <div class="main">
-        <div class="header">
-            <div class="left-logo">
-                <h3>uSearch</h3>
-            </div>
-            <div class="search-box">
-                <div class="search-container">
-                    <h:form>
-                        <h:inputText class="searchInput" value="#{searchBean.searchString}"></h:inputText>
-                        <h:commandButton class="searchButton" value="uSearch" action="#{searchBean.push()}"/>
-                    </h:form>
-                </div>
-                <h:form>
-                    Find by server
-                    <input type="checkbox" name="check1" value="#{searchBean.findByServer}"/>
-                </h:form>
-            </div>
-            <div class="toolkit"></div>
-        </div>
         <h:form>
+            <div class="header">
+                <div class="left-logo">
+                    <h3>uSearch</h3>
+                </div>
+                <div class="search-box">
+                    <div class="search-container">
+                        <h:inputText id="searchQuery" class="searchInput" value="#{searchBean.searchString}"></h:inputText>
+                        <h:commandButton id="searchButton" class="searchButton" value="uSearch" action="#{searchBean.push}">
+                            <f:ajax execute="searchQuery" listener="#{searchBean.push()}" render="@form"/>
+                        </h:commandButton>
+                    </div>
+                </div>
+                <div class="toolkit"></div>
+            </div>
             <div class="content">
                 <div class="search-results">
-                    <h:dataTable id="output" value="#{searchBean.lib}" var="item"
-                                 rowClasses="table-row">
-                        <h:column>
+                    <table>
+                    <c:forEach items="#{searchBean.lib}" var="item">
+                        <tr><td>
                             <div class="search-result">
                                 <div class="left-search-tool">
                                     <img class="server-indicator" src="led.png" alt="server" width="10px"/>
@@ -53,29 +50,38 @@
                                         <span class="attribute-name">file type:</span> text
                                     </div>
                                     <div class="file-attributes">
-                                        #{item.}
+                                        #{item.mssParameters.get(0).getStrValue()}
                                         <c:forEach items="#{item.mssParameters}" var="param">
                                             <div class="attribute-group">
                                                 <span class="attribute-name">
                                                     #{param.mssAttribute.name}
                                                 </span>
-                                                #{param.numValue}
+                                                <h:outputLabel rendered="#{param.mssAttribute.type eq str}">
+                                                    #{param.strValue}
+                                                </h:outputLabel>
+                                                <h:outputLabel rendered="#{param.mssAttribute.type eq num}">
+                                                    #{param.numValue}
+                                                </h:outputLabel>
+                                                <h:outputLabel rendered="#{param.mssAttribute.type eq bool}">
+                                                    #{param.boolValue}
+                                                </h:outputLabel>
                                             </div>
                                         </c:forEach>
                                     </div>
                                     <div class="search-footer">copy</div>
                                 </div>
                             </div>
-                        </h:column>
-                    </h:dataTable>
+                        </td></tr>
+                    </c:forEach>
+                </table>
                 </div>
             </div>
             <div class="footer">
                 <h:commandButton id="prevbutton" value="Prev" action="#{searchBean.toPreviousPage()}">
-                    <f:ajax execute="prevbutton" render="output"/>
+                    <f:ajax execute="prevbutton" render="@form"/>
                 </h:commandButton>
                 <h:commandButton id="nextbutton" value="Next" action="#{searchBean.toNextPage()}">
-                    <f:ajax execute="nextbutton" render="output"/>
+                    <f:ajax execute="nextbutton" render="@form"/>
                 </h:commandButton>
             </div>
         </h:form>
