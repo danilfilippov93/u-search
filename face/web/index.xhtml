@@ -50,19 +50,18 @@
                                         <span class="attribute-name">file type:</span> text
                                     </div>
                                     <div class="file-attributes">
-                                        #{item.mssParameters.get(0).getStrValue()}
                                         <c:forEach items="#{item.mssParameters}" var="param">
                                             <div class="attribute-group">
                                                 <span class="attribute-name">
                                                     #{param.mssAttribute.name}
                                                 </span>
-                                                <h:outputLabel rendered="#{param.mssAttribute.type eq str}">
+                                                <h:outputLabel rendered="#{param.mssAttribute.type eq 'str'}">
                                                     #{param.strValue}
                                                 </h:outputLabel>
-                                                <h:outputLabel rendered="#{param.mssAttribute.type eq num}">
+                                                <h:outputLabel rendered="#{param.mssAttribute.type eq 'num'}">
                                                     #{param.numValue}
                                                 </h:outputLabel>
-                                                <h:outputLabel rendered="#{param.mssAttribute.type eq bool}">
+                                                <h:outputLabel rendered="#{param.mssAttribute.type eq 'bool'}">
                                                     #{param.boolValue}
                                                 </h:outputLabel>
                                             </div>
