@@ -16,6 +16,7 @@
     height: 100%;
     position: relative;
     float: right;
+    padding-bottom: 30px;
 }
 
 .file-name{
@@ -77,21 +78,35 @@ a.file-path-link:visited {
 
 }
 
-.right-search-tool:hover .search-footer {
+.search-result:hover .search-footer {
     display: inline;
 }
 
 .search-footer:hover {
     cursor: pointer;
+}
+
+.expand-attributes {
+    display: inline;
+}
+
+.copy-link {
+    display: inline;
+}
+
+.expand-attributes:hover {
     color: #ff4d3b;
+}
 
-
+.copy-link:hover {
+    color: #ff4d3b;
 }
 
 .file-attributes {
     margin-left: 13px;
     border-top: 1px dashed #dcdcdc;
     color: #1c1c1c;
+    display: none;
 
 }
 

@@ -9,6 +9,8 @@
     <title>Facelet Title</title>
     <h:outputStylesheet library="style" name="usearch.css"/>
     <h:outputStylesheet library="style" name="searchresult.css"/>
+    <h:outputScript library="javascript" name="jquery-1.11.1.min.js"/>
+    <h:outputScript library="javascript" name="animation.js"/>
 </h:head>
 <h:body>
     <div class="main">
@@ -21,7 +23,7 @@
                     <div class="search-container">
                         <h:inputText id="searchQuery" class="searchInput" value="#{searchBean.searchString}"></h:inputText>
                         <h:commandButton id="searchButton" class="searchButton" value="uSearch" action="#{searchBean.push}">
-                            <f:ajax execute="searchQuery" listener="#{searchBean.push()}" render="@form"/>
+                            <f:ajax execute="searchQuery" listener="#{searchBean.push()}" render="@form" onevent="handleEvents"/>
                         </h:commandButton>
                     </div>
                 </div>
@@ -34,7 +36,7 @@
                         <tr><td>
                             <div class="search-result">
                                 <div class="left-search-tool">
-                                    <img class="server-indicator" src="led.png" alt="server" width="10px"/>
+                                    <img class="server-indicator" src="resources/led.png" alt="server" width="10px"/>
                                 </div>
                                 <div class="right-search-tool">
                                     <h3 class="file-name">
@@ -67,7 +69,9 @@
                                             </div>
                                         </c:forEach>
                                     </div>
-                                    <div class="search-footer">copy</div>
+                                    <div class="search-footer">
+                                        <div class="expand-attributes">expand</div>  |  <div class="copy-link">copy</div>
+                                    </div>
                                 </div>
                             </div>
                         </td></tr>
@@ -77,10 +81,10 @@
             </div>
             <div class="footer">
                 <h:commandButton id="prevbutton" value="Prev" action="#{searchBean.toPreviousPage()}">
-                    <f:ajax execute="prevbutton" render="@form"/>
+                    <f:ajax execute="prevbutton" render="@form" onevent="handleEvents"/>
                 </h:commandButton>
                 <h:commandButton id="nextbutton" value="Next" action="#{searchBean.toNextPage()}">
-                    <f:ajax execute="nextbutton" render="@form"/>
+                    <f:ajax execute="nextbutton" render="@form" onevent="handleEvents"/>
                 </h:commandButton>
             </div>
         </h:form>
