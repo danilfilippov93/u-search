@@ -75,7 +75,6 @@ a.file-path-link:visited {
     display: none;
     font-size: 12px;
     color: #8c8c8c;
-
 }
 
 .search-result:hover .search-footer {
@@ -107,7 +106,6 @@ a.file-path-link:visited {
     border-top: 1px dashed #dcdcdc;
     color: #1c1c1c;
     display: none;
-
 }
 
 .attribute-group  {

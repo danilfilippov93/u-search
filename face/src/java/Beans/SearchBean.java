@@ -14,7 +14,7 @@ import java.util.List;
 public class SearchBean {
 
     private int currentPage = 0;
-    private int countElementsOnPage = 2;
+    private int countElementsOnPage = 10;
     private int maxNumberOfPages; // number starts with zero
     private String searchString;
     private boolean findByServer = false;
