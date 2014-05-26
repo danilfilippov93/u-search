@@ -46,7 +46,6 @@ public class SearchBean {
                 return lib.subList(currentPage * countElementsOnPage, countElementsOnPage *(currentPage + 1));
             } catch (IndexOutOfBoundsException e) {
             }
-
         return null;
     }
 
