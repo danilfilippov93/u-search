@@ -30,6 +30,8 @@ public class SearchBean {
         if(searchEngine.getLib().size()%countElementsOnPage != 0)
             maxNumberOfPages++;
         lib = searchEngine.getLib();
+        //if(maxNumberOfPages < 1)
+          //  maxNumberOfPages = 1;
     }
 
     public String getSearchString() {
@@ -43,7 +45,10 @@ public class SearchBean {
     public List<MssFile> getLib() {
         if(lib != null)
             try {
-                return lib.subList(currentPage * countElementsOnPage, countElementsOnPage *(currentPage + 1));
+                if(countElementsOnPage *(currentPage + 1) > lib.size())
+                    return lib.subList(currentPage * countElementsOnPage, lib.size());
+                else
+                    return lib.subList(currentPage * countElementsOnPage, countElementsOnPage *(currentPage + 1));
             } catch (IndexOutOfBoundsException e) {
             }
         return null;

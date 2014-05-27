@@ -19,7 +19,7 @@ public class MssParameter implements Serializable {
 	private MssParameterPK id;
 
 	@Column(name="bool_value")
-	private byte boolValue;
+	private Boolean boolValue;
 
 	@Column(name="num_value")
 	private int numValue;
@@ -49,11 +49,11 @@ public class MssParameter implements Serializable {
 		this.id = id;
 	}
 
-	public byte getBoolValue() {
+	public Boolean getBoolValue() {
 		return this.boolValue;
 	}
 
-	public void setBoolValue(byte boolValue) {
+	public void setBoolValue(Boolean boolValue) {
 		this.boolValue = boolValue;
 	}
 
